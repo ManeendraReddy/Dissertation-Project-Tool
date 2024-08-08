@@ -1,0 +1,82 @@
+.login-page .container {
+  background: #600064;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 50%;
+}
+.login-page h3 {
+  color: #fff;
+  font-size: 3rem;
+  font-weight: 600;
+  padding-bottom: 2rem;
+}
+.login-page .form-group label {
+  font-weight: bold;
+  color: #fff;
+  padding: 4px;
+}
+.login-page .btn-primary {
+  background-color: #240053;
+  border-color: #240053;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.login-page .btn-primary:hover {
+  background-color: #600064;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+.login-page .btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+.login-page .button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.forgot{
+  color: #ffffff8f;
+
+}
+
+.forgot:after {
+  display: block;
+  left: 0;
+  bottom: -2rem;
+  width: 0;
+  height: 2px;
+  background-color: #fff;
+  content: "";
+  transition: width 0.2s;
+  
+}
+
+.forgot:hover {
+  color: #fff;
+}
+
+.register{
+  color: #ffffff8f;
+
+}
+
+/* Simple CSS3 Fade-in Animation */
+.register:after {
+  display: block;
+  left: 0;
+  bottom: -2rem;
+  width: 0;
+  height: 2px;
+  background-color: #fff;
+  content: "";
+  transition: width 0.2s;
+  
+}
+
+.register:hover {
+  color: #fff;
+}

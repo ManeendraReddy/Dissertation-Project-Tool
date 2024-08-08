@@ -1,0 +1,119 @@
+.navbar {
+    background-color: #f8f6f6;
+    height: 80px;
+    margin: 20px;
+    border-radius: 16px;
+    padding: 0.5rem;
+  }
+  
+  .navbar-brand {
+    font-weight: 600;
+    color: #600064;
+    font-size: 24px;
+    transition: 0.3s color;
+  }
+  
+  .login-button {
+    background-color: #600064;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s background-color;
+  }
+  
+  .signup-button:hover {
+    background-color: #240053;
+  }
+  
+  .signup-button {
+    background-color: #600064;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s background-color;
+  }
+  
+  .login-button:hover {
+    background-color: #240053;
+  }
+  
+  .navbar-toggler {
+    border: none;
+    font-size: 1.25rem;
+  }
+  
+  .navbar-toggler:focus, .btn-close:focus {
+    box-shadow: none;
+    outline: none;
+  }
+  
+  .nav-link {
+    color: #600064;
+    font-weight: 500;
+    position: relative;
+  }
+  
+  .nav-link:hover, .nav-link.active {
+    color: #000;
+  }
+  
+  @media (min-width: 991px) {
+    .nav-link::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background-color: #240053;
+      visibility: hidden;
+      transition: 0.3s ease-in-out;
+    }
+  
+    .nav-link:hover::before, .nav-link.active::before {
+      width: 100%;
+      visibility: visible;
+    }
+  }
+  
+  .main-section {
+    background: url('https://plus.unsplash.com/premium_vector-1682310635241-80dc3ccea061?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8b25saW5lJTIwbGVhcm5pbmd8ZW58MHx8MHx8fDA%3D') no-repeat center;
+    background-size: cover;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    
+  }
+  
+  .main-section::before {
+    background-color: rgba(0, 0, 0, 0.6);
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  
+  .main-section .container1 {
+    z-index: 1;
+    position: relative;
+  }
+  
+  .main-section h1 {
+    margin-top:25rem;
+    font-size: 3rem;
+    font-weight: 500;
+  
+  }
+  
+  .main-section h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+  

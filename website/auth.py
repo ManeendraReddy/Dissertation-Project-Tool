@@ -53,9 +53,11 @@ def sign_up():
         else:
             new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='pbkdf2:sha256'))
             db.session.add(new_user)
-            db.session.commit()
-            login_user(user, remember=True)
+            db.session.commit()  # Make sure the user is committed to the database
+
+            login_user(new_user, remember=True)  # Log in the new user
             flash('Account Created', category='success')
             return redirect(url_for('views.home'))
 
     return render_template('sign_up.html', user=current_user)
+

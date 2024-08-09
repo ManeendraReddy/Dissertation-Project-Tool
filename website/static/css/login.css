@@ -23,6 +23,7 @@
   font-weight: bold;
   border-radius: 5px;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  width: 6rem;
 }
 .login-page .btn-primary:hover {
   background-color: #600064;
@@ -41,6 +42,10 @@
 .forgot{
   color: #ffffff8f;
 
+}
+
+.forgotpassword {
+  margin-top: 1rem;
 }
 
 .forgot:after {
@@ -79,4 +84,14 @@
 
 .register:hover {
   color: #fff;
+}
+
+.newuser {
+  margin-top: 1.5rem;
+  margin-left: 1rem;
+  color: #fff;
+}
+
+.input-group-text{
+  height: 2.3rem;
 }

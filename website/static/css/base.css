@@ -16,6 +16,7 @@
 .login-button, .signup-button, .logout-button {
   background-color: #600064;
   color: #fff;
+  border-color: #600064;
   font-size: 14px;
   padding: 8px 20px;
   border-radius: 5px;
@@ -24,8 +25,16 @@
 }
 
 .login-button:hover, .signup-button:hover, .logout-button:hover {
-  background-color: #1c2331;
+  background-color: #240053;
 }
+
+
+
+
+
+
+
+
 
 .navbar-toggler {
   border: none;

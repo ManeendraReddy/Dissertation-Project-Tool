@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Account{% endblock %}
+
+{% block content %}
+<div class="verify-page">
+  <div class="container mt-5">
+    <form method="POST">
+      <h3 align="center">Enter Verification Code</h3>
+      
+      <div class="form-group mt-3">
+        <label for="verification_code">Verification Code</label>
+        <input type="text" class="form-control" id="verification_code" name="verification_code" placeholder="Enter the 6-digit code sent to your email" required />
+      </div>
+
+      <br />
+      <div class="button-container">
+        <button type="submit" class="btn btn-primary">Verify</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

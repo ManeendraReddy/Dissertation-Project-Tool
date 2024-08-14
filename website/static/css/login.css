@@ -9,7 +9,7 @@
   color: #fff;
   font-size: 3rem;
   font-weight: 600;
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 }
 .login-page .form-group label {
   font-weight: bold;
@@ -94,4 +94,11 @@
 
 .input-group-text{
   height: 2.3rem;
+}
+
+.custom-alert {
+  margin-left: 10.5rem;
+  background-color: #cc0000;
+  width: 20rem;
+  color: #fff;
 }

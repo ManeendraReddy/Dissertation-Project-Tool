@@ -1,13 +1,18 @@
+
 {% extends "base.html" %}
 
 {% block title %}Login{% endblock %}
 
 {% block content %}
+
+
+
 <div class="login-page">
   <div class="container mt-5">
+
     <form method="POST">
 
-      <h3 class="mt-4" align="center">Login</h3>
+      <h3 class="mt-1" align="center">Login</h3>
 
       <div class="form-group">
         <label for="email">Email Address</label>
@@ -41,6 +46,19 @@
     </form>
   </div>
 </div>
+
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show custom-alert" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 
 <script>
   const togglePassword = document.querySelector('#togglePassword');

@@ -29,7 +29,9 @@
 }
 
 
-
+.logout-button{
+  margin: 3rem;
+}
 
 
 
@@ -124,13 +126,6 @@
  
 }
 
-.mediaicons {
-  margin-right: 30rem;
-}
-
-.socialmedia {
-  margin-left: 25rem;
-}
 
 .main-section h1{
   color: #fff;
@@ -158,4 +153,15 @@
 .my-5 {
   margin-top: .01rem !important;
   margin-bottom: .01rem !important;
+}
+
+
+.dropdown-toggle::after {
+  
+  color: #600064;
+}
+
+
+.alert {
+  margin-top: 20px;
 }

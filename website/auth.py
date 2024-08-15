@@ -1,10 +1,16 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, app, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
 from . import db
+import jwt
+import datetime
+from flask_mail import Message, Mail
+
 
 auth = Blueprint('auth', __name__)
+
+mail = Mail()
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -58,3 +64,46 @@ def sign_up():
             return redirect(url_for('views.home'))
 
     return render_template("sign_up.html", user=current_user)
+
+
+@auth.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            token = jwt.encode({'user_id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)}, app.config['SECRET_KEY'], algorithm="HS256")
+            msg = Message('Password Reset Request',
+                          sender='maneendramail@gmail.com',
+                          recipients=[email])
+            msg.body = f'''To reset your password, visit the following link:
+{url_for('auth.reset_token', token=token, _external=True)}
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+            mail.send(msg)
+            flash('An email has been sent with instructions to reset your password.', 'info')
+        else:
+            flash('That email does not exist.', 'error')
+    return render_template('forgot-password.html')
+
+
+
+@auth.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    try:
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        user_id = payload['user_id']
+    except:
+        flash('Invalid or expired token', 'warning')
+        return redirect(url_for('auth.login'))
+
+    user = User.query.get(user_id)
+    if request.method == 'POST':
+        password = request.form.get('password')
+        user.password = generate_password_hash(password, method='pbkdf2:sha256')
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('auth.login'))
+    return render_template('reset_password.html', token=token)
+
+

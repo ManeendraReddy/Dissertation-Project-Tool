@@ -7,6 +7,7 @@ from website import create_app
 app = create_app()
 app.config['SECRET_KEY'] = 'your_secret_key'
 
+
 # Mock user database
 users = {}
 

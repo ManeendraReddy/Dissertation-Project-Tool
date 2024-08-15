@@ -58,7 +58,7 @@
           <img src="{{ url_for('static', filename='images/user-icon.png') }}" alt="User Icon" style="height: 40px;color: #600064;">
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-          <li><span class="dropdown-item-text"><strong>Name:</strong> {{ user.first_name }}</span></li>
+          <li><span class="dropdown-item-text"><strong>Name:</strong> {{ user.full_name }}</span></li>
           <li><span class="dropdown-item-text"><strong>Email:</strong> {{ user.email }}</span></li>
           <li><hr class="dropdown-divider"></li>
           <a class="logout-button" id="logout" href="/logout">Logout</a>

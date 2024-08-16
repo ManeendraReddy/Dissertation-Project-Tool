@@ -1,4 +1,4 @@
-from flask import Blueprint, app, render_template, request, flash, redirect, url_for
+from flask import Blueprint, current_app as app, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User
@@ -6,7 +6,6 @@ from . import db
 import jwt
 import datetime
 from flask_mail import Message, Mail
-
 
 auth = Blueprint('auth', __name__)
 
@@ -65,7 +64,6 @@ def sign_up():
 
     return render_template("sign_up.html", user=current_user)
 
-
 @auth.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
@@ -74,12 +72,12 @@ def forgot_password():
         if user:
             token = jwt.encode({'user_id': user.id, 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)}, app.config['SECRET_KEY'], algorithm="HS256")
             msg = Message('Password Reset Request',
-                          sender='maneendramail@gmail.com',
+                          sender='maneendrameegada7@gmail.com',
                           recipients=[email])
             msg.body = f'''To reset your password, visit the following link:
-{url_for('auth.reset_token', token=token, _external=True)}
-If you did not make this request then simply ignore this email and no changes will be made.
-'''
+            {url_for('auth.reset_token', token=token, _external=True)}
+            If you did not make this request then simply ignore this email and no changes will be made.
+            '''
             mail.send(msg)
             flash('An email has been sent with instructions to reset your password.', 'info')
         else:
@@ -105,5 +103,3 @@ def reset_token(token):
         flash('Your password has been updated!', 'success')
         return redirect(url_for('auth.login'))
     return render_template('reset_password.html', token=token)
-
-

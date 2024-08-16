@@ -86,7 +86,7 @@ def forgot_password():
 
 
 
-@auth.route('/reset_password/<token>', methods=['GET', 'POST'])
+@auth.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_token(token):
     try:
         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
@@ -102,4 +102,4 @@ def reset_token(token):
         db.session.commit()
         flash('Your password has been updated!', 'success')
         return redirect(url_for('auth.login'))
-    return render_template('reset_password.html', token=token)
+    return render_template('reset-password.html', token=token)

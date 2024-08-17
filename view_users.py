@@ -6,5 +6,5 @@ app = create_app()
 with app.app_context():
     users = User.query.all()
     for user in users:
-        print(f"ID: {user.id}, Email: {user.email}, Name: {user.first_name}, Password: {user.password}")
+        print(f"ID: {user.id}, Email: {user.email}, Name: {user.full_name}, Password: {user.password}")
  

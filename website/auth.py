@@ -11,6 +11,8 @@ auth = Blueprint('auth', __name__)
 
 mail = Mail()
 
+
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

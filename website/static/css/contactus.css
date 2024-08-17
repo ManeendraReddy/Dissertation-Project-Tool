@@ -1,0 +1,116 @@
+body{
+    color:#fff
+  }
+  .right_conatct_social_icon{
+       background: #240053;
+  }
+  .contact_us{
+      background-color: #f1f1f1;
+      padding: 120px 0px;
+  }
+  
+  .contact_inner{
+      background-color: #640064;
+      position: relative;
+      box-shadow: 20px 22px 44px #cccc;
+      border-radius: 25px;
+  }
+  .contact_field{
+      padding: 60px 340px 90px 100px;
+  }
+  .right_conatct_social_icon{
+      height: 100%;
+  }
+  
+  .contact_field h3{
+     color: #fff;
+      font-size: 40px;
+      letter-spacing: 1px;
+      font-weight: 600;
+      margin-bottom: 10px
+  }
+  .contact_field p{
+      color: #ffffffb4;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 1px;
+      margin-bottom: 35px;
+  }
+  .contact_field .form-control{
+      border-radius: 6px;
+      border-bottom: 1px solid #ccc;
+  }
+  .contact_field .form-control:focus{
+      box-shadow: none;
+      outline: none;
+      border-bottom: 2px solid #1325e8;
+  }
+  .contact_field .form-control::placeholder{
+      font-size: 13px;
+      letter-spacing: 1px;
+  }
+  
+  .contact_info_sec {
+      position: absolute;
+      background-color: #fff;
+      right: 1px;
+      top: 18%;
+      height: 340px;
+      width: 340px;
+      padding: 40px;
+      border-radius: 25px 0 0 25px;
+  }
+  .contact_info_sec h4{
+      letter-spacing: 1px;
+      padding-bottom: 15px;
+      color: #640064;
+  }
+  
+  .info_single{
+      margin: 30px 0px;
+      color: #640064;
+  }
+  .info_single i{
+      margin-right: 15px;
+      color: #640064;
+
+  }
+  .info_single span{
+      font-size: 14px;
+      letter-spacing: 1px;
+      color: #640064;
+
+  }
+
+  .btn-primary {
+    background-color: #240053;
+    border-color: #240053;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    --bs-btn-active-bg: #600064;
+  }
+  
+  .btn-primary:hover {
+    background-color: #600064;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-color: #240053;
+  }
+  .btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #600064;
+    
+  }
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+.form-group label {
+    color: #fff;
+    font-weight: 500;
+    padding: 4px;
+  }

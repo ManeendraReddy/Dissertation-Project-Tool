@@ -11,6 +11,11 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 # Mock user database
 users = {}
 
+
+@app.route('/contact-us')
+def contact_us():
+    return render_template('contactus.html')
+
 @app.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     form = SignUpForm()

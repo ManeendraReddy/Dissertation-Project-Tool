@@ -21,8 +21,6 @@
     justify-items: center;
  }
 
-
- 
  h4.information-text {
     padding-bottom: 2rem;
     color: #ffffff7d;
@@ -37,10 +35,11 @@
     background-color: #600064;
     color: #fff;
     text-align: center;
-    width: 90%;
-    margin: 1em	auto;
-    max-width: 500px;
-  }
+    width: 100%;
+    margin: 1em auto;
+    max-width: 720px;
+}
+
   .login-page h3 {
     color: #fff;
     font-size: 3rem;
@@ -68,7 +67,6 @@
     font-weight: bold;
     border-radius: 5px;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    width: 6rem;
   }
 
 
@@ -107,5 +105,3 @@
     width: 35rem;
     color: #fff;
   }
-
-  

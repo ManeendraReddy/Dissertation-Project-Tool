@@ -54,9 +54,9 @@ def login():
     
     return render_template('login.html', form=form)
 
-@app.route('/')
-def home():
-    return render_template('home.html')
+@app.route('/join')
+def join():
+    return render_template('join.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

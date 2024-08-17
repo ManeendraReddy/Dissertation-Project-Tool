@@ -5,20 +5,20 @@
 {% block content %}
 
 <div class="home">
-<div class="container1 d-flex align-items-center justify-content-center fs-1 text-white flex-column">
-  <h1>WELCOME</h1>
-  <h2>REMOTE LEARNING QUESTIONING TOOL</h2>
-</div>
+  <div class="container1 d-flex align-items-center justify-content-center fs-1 text-white flex-column">
+    <h1>WELCOME</h1>
+    <h2>REMOTE LEARNING QUESTIONING TOOL</h2>
+  </div>
 </div>
 
-<div class="session">
+<div class="home1">
 
   <div class="button-container">
-    <button type="join" class="btn btn-primary">Join Session</button>
+    <a href="{{ url_for('join') }}" class="btn btn-primary">Join Session</a>
   </div>
   
   <div class="button-container">
-    <button type="create" class="btn btn-primary">+ Create Sessison</button>
+    <a  class="btn btn-primary">+ Create Session</a>
   </div>
   
 </div>

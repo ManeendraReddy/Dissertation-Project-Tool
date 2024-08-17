@@ -150,39 +150,41 @@
   margin-top: 20px;
 }
 
-.session {
+.home1 {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  background-color: #600064;
   margin-top: 5rem;
   padding: 3rem;
   width: 720px;
   border-radius: 6px;
+  background: url('https://images.unsplash.com/photo-1611532736570-dd6b097ecbb3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fG9ubGluZSUyMGVkdWNhdGlvbnxlbnwwfHwwfHx8MA%3D%3D') no-repeat center;
+  background-size: cover;
 }
 
 .btn-primary {
-  background-color: #240053;
-  border-color: #240053;
+  background-color: #600064;
+  border-color: #600064;
   font-size: 16px;
-  font-weight: bold;
+  /* font-weight: bold; */
   border-radius: 5px;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
+  --bs-btn-active-bg: #600064;
 }
 
 .btn-primary:hover {
-  background-color: #600064;
+  background-color: #240053;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: #240053;
 }
-
 .btn-primary:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+  
 }
-
 .button-container {
+  display: flex;
   justify-content: center;
   margin-top: 20px;
 }

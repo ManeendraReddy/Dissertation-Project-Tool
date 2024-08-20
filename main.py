@@ -1,8 +1,11 @@
 
-from flask import Flask, render_template, redirect, url_for, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session, request
 from forms import SignUpForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from website import create_app
+from flask_login import current_user
+
+
 
 app = create_app()
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -57,6 +60,28 @@ def login():
 @app.route('/join')
 def join():
     return render_template('join.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/create', methods=['GET', 'POST'])
+def create():
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+        # Here you can handle the data, e.g., save to a database
+        return redirect(url_for('session_details', title=title, description=description))
+    return render_template('create.html', user=current_user)
+
+
+@app.route('/session-details')
+def session_details():
+    title = request.args.get('title')
+    description = request.args.get('description')
+    return render_template('session_details.html', title=title, description=description, user=current_user)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

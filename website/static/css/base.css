@@ -125,7 +125,7 @@
 
 .main-section h1 {
   margin-top: 5rem;
-  font-size: 10rem;
+  font-size: 8rem;
   font-weight: 500;
 }
 
@@ -157,7 +157,6 @@
   align-items: center;
   margin-top: 5rem;
   padding: 3rem;
-  width: 720px;
   border-radius: 6px;
   background: url('https://images.unsplash.com/photo-1611532736570-dd6b097ecbb3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fG9ubGluZSUyMGVkdWNhdGlvbnxlbnwwfHwwfHx8MA%3D%3D') no-repeat center;
   background-size: cover;

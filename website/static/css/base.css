@@ -142,7 +142,7 @@
 
 .dropdown-toggle::after {
   
-  color: #600064;
+  color: #fff;
 }
 
 
@@ -186,4 +186,9 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+a {
+  color: var(--lt-color-gray-100);
+  text-decoration: underline;
 }

@@ -38,7 +38,7 @@
       border-radius: 5px;
       text-decoration: none;
       transition: 0.3s background-color;
-      margin: 5rem;
+      margin: 1rem;
     }
 
     .logout-button:hover {
@@ -67,8 +67,6 @@
 
     }
 
-
-  
     .title, .description {
       margin-bottom: 20px;
     }
@@ -96,31 +94,38 @@
       z-index: 999;
     }
 
-    .dropdown {
+    .btn-group {
       position: absolute;
       top: 20px;
-      right: 7px;
+      right: 15px;
       z-index: 1000;
     }
 
-    .dropdown-menu {
-      right: 0;
-      left: auto;
-      margin: 1rem;
-    }
+  
 
     a {
-    color: var(--lt-color-gray-100);
+    color: #600064;
     text-decoration: underline;
     }
 
+    .home {
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    }
+
+    .logout {
+    margin-bottom: 1rem;
+    }
+
+
+    
   </style>
 </head>
 <body>
 
   <div class="sidebar"></div>
 
-  <div class="dropdown">
+  <div class="btn-group dropstart">
     <a class="dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
       <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon" style="height: 40px;">
     </a>
@@ -128,13 +133,21 @@
       <li><span class="dropdown-item-text"><strong>Name:</strong> {{ user.full_name }}</span></li>
       <li><span class="dropdown-item-text"><strong>Email:</strong> {{ user.email }}</span></li>
       <li><hr class="dropdown-divider"></li>
+
+      <div class="home">
+      <li><a class="logout-button" id="logout" href="/">Home</a></li>
+      </div>
+
+      <div class="logout">
       <li><a class="logout-button" id="logout" href="/logout">Logout</a></li>
+    </div>
+
     </ul>
   </div>
 
   <div class="content-container">
+    <div class="session-id" style="color: #600064;"><b>Session ID: {{ session_id }}</b></div>
     <div class="title">{{ title }}</div>
-    <div class="description">{{ description }}</div>
   </div>
   
   <a href="#" class="btn new-post-btn">+</a>

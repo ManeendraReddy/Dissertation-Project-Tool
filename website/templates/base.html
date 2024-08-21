@@ -54,9 +54,10 @@
         </div>
       </div>
       {% if user.is_authenticated %}
+      <span class="dropdown-item-text"><b>{{ user.full_name }}</b></span>
       <div class="dropdown">
         <a class="dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="{{ url_for('static', filename='images/user-icon.png') }}" alt="User Icon" style="height: 40px;color: #600064;">
+          <img src="{{ url_for('static', filename='images/user-icon.png') }}" alt="User Icon" style="height: 40px;">
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
           <li><span class="dropdown-item-text"><strong>Name:</strong> {{ user.full_name }}</span></li>
@@ -64,10 +65,12 @@
           <li><hr class="dropdown-divider"></li>
           <a class="logout-button" id="logout" href="/logout">Logout</a>
         </ul>
+
         <button class="navbar-toggler pe-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
       </div>
+
       {% else %}
       <a class="login-button" id="login" href="/login">Login</a>
       <a class="signup-button mx-2" id="signUp" href="/sign-up">Sign up</a>

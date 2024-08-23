@@ -101,24 +101,41 @@
       z-index: 1000;
     }
 
-  
+    .leave-session-btn {
+      background-color: #dc3545;
+      color: #fff;
+      border-color: #dc3545;
+      font-size: 14px;
+      padding: 8px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: 0.3s background-color;
+      margin-left: 2rem;
+    }
+
+    .leave-session-btn:disabled {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .leave-session-btn:hover:not(:disabled) {
+      background-color: #c82333;
+    }
 
     a {
-    color: #600064;
-    text-decoration: underline;
+      color: #600064;
+      text-decoration: underline;
     }
 
     .home {
-    margin-bottom: 2rem;
-    margin-top: 1rem;
+      margin-bottom: 2rem;
+      margin-top: 1rem;
     }
 
     .logout {
-    margin-bottom: 1rem;
+      margin-bottom: 1rem;
     }
-
-
-    
   </style>
 </head>
 <body>
@@ -126,23 +143,35 @@
   <div class="sidebar"></div>
 
   <div class="btn-group dropstart">
-    <a class="dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon" style="height: 40px;">
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-      <li><span class="dropdown-item-text"><strong>Name:</strong> {{ user.full_name }}</span></li>
-      <li><span class="dropdown-item-text"><strong>Email:</strong> {{ user.email }}</span></li>
-      <li><hr class="dropdown-divider"></li>
 
-      <div class="home">
-      <li><a class="logout-button" id="logout" href="/">Home</a></li>
-      </div>
 
-      <div class="logout">
-      <li><a class="logout-button" id="logout" href="/logout">Logout</a></li>
-    </div>
+    {% if current_user.is_authenticated %}
+      <a class="dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon" style="height: 40px;">
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        <li><span class="dropdown-item-text"><strong>Name:</strong> {{ current_user.full_name }}</span></li>
+        <li><span class="dropdown-item-text"><strong>Email:</strong> {{ current_user.email }}</span></li>
+        <li><hr class="dropdown-divider"></li>
 
-    </ul>
+        <div class="home">
+        <li><a class="logout-button" id="logout" href="/">Home</a></li>
+        </div>
+
+        <div class="logout">
+        <li><a class="logout-button" id="logout" href="/logout">Logout</a></li>
+        </div>
+
+      </ul>
+      {% else %}
+      <a class="dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon" style="height: 40px;">
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+        <li style="margin: 1rem; width: max-content;"><span class="dropdown-item-text"><strong>Name: </strong> Anonymous</span></li>
+        <a class="leave-session-btn" href="{{ url_for('join') }}">Leave Session</a>
+      </ul>
+    {% endif %}
   </div>
 
   <div class="content-container">

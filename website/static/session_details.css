@@ -1,0 +1,122 @@
+    body {
+      font-family: "Segoe UI", Verdana, Helvetica, Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+
+    .content-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+      max-width: 720px;
+      margin-top: 3rem;
+      margin-left: 3rem;
+    }
+
+    .logout-button {
+      background-color: #600064;
+      color: #fff;
+      border-color: #600064;
+      font-size: 14px;
+      padding: 8px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: 0.3s background-color;
+      margin: 1rem;
+    }
+
+    .logout-button:hover {
+      background-color: #240053;
+    }
+
+    .new-post-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 3rem;
+    background-color: #240053;
+    padding: 10px 20px;
+    font-size: 1.5rem;
+    border-radius: 9999px;
+    border-color: #240053;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    font-weight: bold;
+    color: #fff;
+}
+
+    .new-post-btn:hover {
+      background-color: #600064;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      color: #fff;
+
+    }
+
+    .title, .description {
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .description {
+      font-size: 1.2rem;
+      color: #555;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 75px;
+      height: 100%;
+      background-color: #600064;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .btn-group {
+      position: absolute;
+      top: 20px;
+      right: 15px;
+      z-index: 1000;
+    }
+
+    .leave-session-btn {
+      background-color: #dc3545;
+      color: #fff;
+      border-color: #dc3545;
+      font-size: 14px;
+      padding: 8px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: 0.3s background-color;
+      margin-left: 2rem;
+    }
+
+    .leave-session-btn:disabled {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    .leave-session-btn:hover:not(:disabled) {
+      background-color: #c82333;
+    }
+
+    a {
+      color: #600064;
+      text-decoration: underline;
+    }
+
+    .home {
+      margin-bottom: 2rem;
+      margin-top: 1rem;
+    }
+
+    .logout {
+      margin-bottom: 1rem;
+    }

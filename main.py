@@ -93,29 +93,15 @@ def create():
     
     return render_template('create.html', user=current_user, sessions=sessions)
 
-
-
 @app.route('/sessions', methods=['GET'])
 @login_required
 def get_sessions():
-    user_email = session.get('email', None)  # Ensure we're getting the email from the current session
-
-    if not user_email:
-        # Handle case where email is not found in session, though this should be rare since @login_required is used
-        return jsonify({"message": "No sessions available."}), 400
-
+    user_email = session.get('email', 'guest')
     sessions = Session.query.filter_by(user_email=user_email).all()
-
-    if not sessions:
-        # No sessions found for the user, return a message
-        return jsonify({"message": "No sessions created yet."})
-
-    # Format and return the sessions
+    
     return jsonify([
-        {'title': session.title, 'session_id': session.session_id, 'user_email': user_email} for session in sessions
+        {'title': session.title,'session_id': session.session_id, 'user_email': user_email} for session in sessions
     ])
-
-
 
 
 @app.route('/session/<int:session_id>/<string:user_email>', methods=['GET'])

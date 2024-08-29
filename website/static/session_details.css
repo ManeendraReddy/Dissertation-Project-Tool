@@ -1,122 +1,182 @@
-    body {
-      font-family: "Segoe UI", Verdana, Helvetica, Arial, sans-serif;
-      background-color: #f8f9fa;
-      padding: 20px;
-    }
-
-    .content-container {
-      display: flex;
-      flex-direction: column;
-      justify-content: start;
-      max-width: 720px;
-      margin-top: 3rem;
-      margin-left: 3rem;
-    }
-
-    .logout-button {
-      background-color: #600064;
-      color: #fff;
-      border-color: #600064;
-      font-size: 14px;
-      padding: 8px 20px;
-      border-radius: 5px;
-      text-decoration: none;
-      transition: 0.3s background-color;
-      margin: 1rem;
-    }
-
-    .logout-button:hover {
-      background-color: #240053;
-    }
-
-    .new-post-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 3rem;
-    background-color: #240053;
-    padding: 10px 20px;
-    font-size: 1.5rem;
-    border-radius: 9999px;
-    border-color: #240053;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    z-index: 1000;
-    font-weight: bold;
-    color: #fff;
+body {
+  font-family: "Segoe UI", Verdana, Helvetica, Arial, sans-serif;
+  background-color: #f8f9fa;
+  padding: 20px;
 }
 
-    .new-post-btn:hover {
-      background-color: #600064;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      color: #fff;
+.content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  max-width: 720px;
+  margin-top: 3rem;
+  margin-left: 3rem;
+}
 
-    }
+.logout-button {
+  background-color: #600064;
+  color: #fff;
+  border-color: #600064;
+  font-size: 14px;
+  padding: 8px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: 0.3s background-color;
+  margin: 1rem;
+}
 
-    .title, .description {
-      margin-bottom: 20px;
-    }
+.logout-button:hover {
+  background-color: #240053;
+}
 
-    .title {
-      font-size: 2rem;
-      font-weight: bold;
-    }
+.new-post-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 3rem;
+  background-color: #240053;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  border-radius: 9999px;
+  border-color: #240053;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1000;
+  font-weight: bold;
+  color: #fff;
+}
 
-    .description {
-      font-size: 1.2rem;
-      color: #555;
-    }
+.new-post-btn:hover {
+  background-color: #600064;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
 
-    .sidebar {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 75px;
-      height: 100%;
-      background-color: #600064;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
 
-    .btn-group {
-      position: absolute;
-      top: 20px;
-      right: 15px;
-      z-index: 1000;
-    }
+.description {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 20px;
+}
 
-    .leave-session-btn {
-      background-color: #dc3545;
-      color: #fff;
-      border-color: #dc3545;
-      font-size: 14px;
-      padding: 8px 20px;
-      border-radius: 5px;
-      text-decoration: none;
-      transition: 0.3s background-color;
-      margin-left: 2rem;
-    }
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 75px;
+  height: 100%;
+  background-color: #600064;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
 
-    .leave-session-btn:disabled {
-      background-color: #6c757d;
-      border-color: #6c757d;
-      cursor: not-allowed;
-    }
+.btn-group {
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  z-index: 1000;
+}
 
-    .leave-session-btn:hover:not(:disabled) {
-      background-color: #c82333;
-    }
+.leave-session-btn {
+  background-color: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+  font-size: 14px;
+  padding: 8px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: 0.3s background-color;
+  margin-left: 2rem;
+}
 
-    a {
-      color: #600064;
-      text-decoration: underline;
-    }
+.leave-session-btn:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
 
-    .home {
-      margin-bottom: 2rem;
-      margin-top: 1rem;
-    }
+.leave-session-btn:hover:not(:disabled) {
+  background-color: #c82333;
+}
 
-    .logout {
-      margin-bottom: 1rem;
-    }
+a {
+  color: #600064;
+  text-decoration: underline;
+}
+
+.home {
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.logout {
+  margin-bottom: 1rem;
+}
+
+/* Modal Specific Styles */
+.modal-header {
+  background-color: #240053;
+  color: #fff;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
+.modal-footer {
+  border-top: none;
+  
+}
+
+.btn-close {
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+.btn-primary {
+  background-color: #240053;
+  border-color: #240053;
+  transition:
+  background-color 0.3s ease;
+  --bs-btn-active-bg: #600064;
+}
+
+.btn-primary:hover {
+  background-color: #600064;
+  border-color: #600064;
+}
+
+.form-control:focus {
+  border-color: #600064;
+  box-shadow: 0 0 0 0.2rem rgba(96, 0, 100, 0.25);
+}
+
+.modal-content {
+  border-radius: 10px;
+}
+
+.modal-body {
+  padding: 20px 30px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #565e64;
+  border-color: #51575d;
+}

@@ -88,3 +88,18 @@ h4.information-text {
     color: #fff;
     background-color: red;
 }
+
+.newuser {
+    margin-top: 1.5rem;
+    margin-left: 1rem;
+    color: #fff;
+  }
+
+  a {
+    color: #ffffff8f;
+    text-decoration: underline;
+}
+
+a:hover{
+    color: #fff;
+}

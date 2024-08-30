@@ -131,7 +131,6 @@ a {
 
 .modal-footer {
   border-top: none;
-  
 }
 
 .btn-close {
@@ -142,8 +141,7 @@ a {
 .btn-primary {
   background-color: #240053;
   border-color: #240053;
-  transition:
-  background-color 0.3s ease;
+  transition: background-color 0.3s ease;
   --bs-btn-active-bg: #600064;
 }
 
@@ -181,7 +179,6 @@ a {
   border-color: #51575d;
 }
 
-
 /* Post card styling */
 .post-card {
   background-color: #240053;
@@ -191,6 +188,10 @@ a {
   margin-bottom: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   max-width: 250px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .post-card .card-header {
@@ -217,7 +218,6 @@ a {
   font-size: 10px;
 }
 
-
 .post-card .card-header .post-time {
   color: #9e9e9e;
   font-size: 0.5rem;
@@ -234,6 +234,7 @@ h5 {
 
 .post-card .card-actions {
   display: grid;
+  justify-content: space-between;
   align-items: center;
   margin-top: 1rem;
 }
@@ -241,7 +242,7 @@ h5 {
 .post-card .card-actions .interaction-icons {
   display: flex;
   align-items: center;
-  font-size: .8rem;
+  font-size: 0.8rem;
 }
 
 .post-card .card-actions .interaction-icons .icon {
@@ -259,7 +260,7 @@ h5 {
   color: #9e9e9e;
   font-size: 0.9rem;
   cursor: pointer;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
 }
 
 .post-card .card-actions .add-comment:hover {
@@ -287,7 +288,6 @@ h5 {
   color: #fff;
 }
 
-
 .fa-regular, .far {
   font-family: "Font Awesome 6 Free";
   font-weight: 400;
@@ -304,7 +304,45 @@ div#postsContainer {
   gap: 1.5rem;
 }
 
+/* Responsive design: Adjust grid for smaller screens */
+@media (max-width: 768px) {
+  #postsContainer {
+    grid-template-columns: repeat(2, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  #postsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-label {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   font-weight: bold;
+}
+
+
+/* Updated CSS */
+.icon {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.icon.liked i,
+.icon.disliked i {
+  color: #fec006;
+}
+
+.icon.like-icon.liked i,
+.icon.dislike-icon.disliked i {
+  color: #fec006;
+}
+
+.icon.like-icon.liked {
+  color: #fec006;
+}
+
+.icon.dislike-icon.disliked {
+  color: #fec006;
 }

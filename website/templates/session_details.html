@@ -15,7 +15,7 @@
 </head>
 <body>
 
-  <div class="sidebar"></div>
+  <div class="sidebar">
 
   <div class="btn-group dropstart">
     {% if current_user.is_authenticated %}
@@ -42,6 +42,7 @@
         <a class="leave-session-btn" href="{{ url_for('join') }}">Leave Session</a>
       </ul>
     {% endif %}
+  </div>
   </div>
 
   <div class="content-container">

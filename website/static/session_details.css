@@ -411,11 +411,10 @@ h5 {
 .comment-input {
   flex-grow: 1;
   resize: none;
-  border-radius: 20px;
+  border-radius: 12px;
 }
 
 .publish-comment {
-  margin-left: 10px;
   background-color: #fec006;
   border: none;
   color: white;
@@ -424,6 +423,8 @@ h5 {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 .publish-comment i {
@@ -436,4 +437,53 @@ h5 {
 
 .comment {
   margin-bottom: 10px;
+  display: grid;
+}
+
+.cancel-comment{
+  color: #fff;
+}
+
+
+textarea.form-control {
+  height: 2.5rem;
+}
+
+.comment-text {
+  font-size: 10px;
+  margin-left: 2.1rem;
+}
+
+.comment-user-info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+
+
+.comment-user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-options-container {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-options-container .btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.comment-options-container .btn i {
+  color: #600064;
+  cursor: pointer;
+}
+
+.comment-options-container .btn i:hover {
+  color: #fff;
 }

@@ -131,6 +131,7 @@ a {
 
 .modal-footer {
   border-top: none;
+
 }
 
 .btn-close {
@@ -165,7 +166,6 @@ a {
 
 .modal-footer {
   display: flex;
-  justify-content: space-between;
 }
 
 .btn-secondary {
@@ -191,6 +191,7 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
 }
 
 .post-card .card-header {
@@ -487,3 +488,29 @@ textarea.form-control {
 .comment-options-container .btn i:hover {
   color: #fff;
 }
+
+
+.new-post {
+  position: fixed;
+  bottom: 20px;
+  right: 3rem;
+  background-color: #240053;
+  padding: 10px 20px;
+  font-size: 1.5rem;
+  border-radius: 9999px;
+  border-color: #240053;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1000;
+  font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.new-post:hover {
+  background-color: #600064;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+
+

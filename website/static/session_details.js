@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Initialize interactions for a single post
     function initializePostInteractions(postCard) {
         const likeIcon = postCard.querySelector('.like-icon');
         const dislikeIcon = postCard.querySelector('.dislike-icon');
@@ -6,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const commentCountElement = postCard.querySelector('.fa-comment + span');
         const postId = postCard.dataset.postId;
 
+        // Initialize the like and dislike states based on localStorage
         if (localStorage.getItem(`likedPost_${postId}`)) {
             likeIcon.classList.add('liked');
             likeIcon.style.color = '#fec006';
@@ -15,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dislikeIcon.style.color = '#fec006';
         }
 
+        // Like button click event
         likeIcon.addEventListener('click', function () {
             if (localStorage.getItem(`likedPost_${postId}`)) {
                 likeIcon.classList.remove('liked');
@@ -39,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
             sortPosts();
         });
 
+        // Dislike button click event
         dislikeIcon.addEventListener('click', function () {
             if (localStorage.getItem(`dislikedPost_${postId}`)) {
                 dislikeIcon.classList.remove('disliked');
@@ -63,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
             sortPosts();
         });
 
+        // Post options dropdown toggle
         const postOptionsToggle = postCard.querySelector('.post-options-toggle');
         const postOptionsDropdown = postCard.querySelector('.post-options-dropdown');
 
@@ -81,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
             event.stopPropagation();
         });
 
+        // Edit post button click event
         postCard.querySelector('.edit-post-btn').addEventListener('click', function () {
             const modal = new bootstrap.Modal(document.getElementById('newPostModal'));
             const postTitleElement = postCard.querySelector('.card-content h5');
@@ -94,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.show();
         });
 
+        // Delete post button click event
         postCard.querySelector('.delete-post-btn').addEventListener('click', function () {
             if (confirm('Are you sure you want to delete this post?')) {
                 postCard.remove();
@@ -175,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function initializeCommentInteractions(comment, postCard) {
         const commentCountElement = postCard.querySelector('.fa-comment + span');
-        const commentIcon = postCard.querySelector('.fa-comment');
 
         comment.querySelector('.edit-comment-btn').addEventListener('click', function () {
             const commentTextElement = comment.querySelector('.comment-text');
@@ -267,6 +273,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function escapeHTML(str) {
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
     document.querySelector('.new-post-btn').addEventListener('click', function () {
         const newPostForm = document.getElementById('newPostForm');
         const modalLabel = document.getElementById('newPostModalLabel');
@@ -277,37 +289,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const newPostModal = new bootstrap.Modal(document.getElementById('newPostModal'));
         newPostModal.show();
+
+        document.querySelector('.modal-backdrop').style.transition = 'none';
+
     });
 
     document.getElementById('newPostForm').addEventListener('submit', function(event) {
         event.preventDefault();
-
+    
         const postId = this.dataset.editingPostId;
         const postTitle = document.getElementById('postTitle').value.trim();
-
+    
         if (!postTitle) {
             alert('Question cannot be empty.');
             return;
         }
-
+    
         if (postId) {
             const postCard = document.querySelector(`[data-post-id="${postId}"]`);
             const postTitleElement = postCard.querySelector('.card-content h5');
             postTitleElement.textContent = postTitle;
-
+    
             const postTimeElement = postCard.querySelector('.post-time');
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
             const formattedDate = now.toLocaleDateString('en-UK', options);
             postTimeElement.textContent = formattedDate;
-
+    
             delete this.dataset.editingPostId;
             document.getElementById('newPostModalLabel').textContent = 'Post a New Question';
         } else {
             const now = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
             const formattedDate = now.toLocaleDateString('en-UK', options);
-
+    
             const newPost = document.createElement('div');
             newPost.classList.add('post-card');
             newPost.dataset.postId = Math.random().toString(36).substr(2, 9);
@@ -346,26 +361,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="add-comment">Add comment</div>
                 </div>
             `;
-
+    
             const postsContainer = document.getElementById('postsContainer');
             postsContainer.appendChild(newPost);
-
+    
+            // Initialize interactions for the new post
             initializePostInteractions(newPost);
         }
-
+    
         this.reset();
         const newPostModalInstance = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
         newPostModalInstance.hide();
+    
+        document.querySelector('.modal-backdrop').remove();
 
         sortPosts();
     });
-
+    
+    // Initialize existing posts
     document.querySelectorAll('.post-card').forEach(initializePostInteractions);
     sortPosts();
-
-    function escapeHTML(str) {
-        const div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
-    }
 });

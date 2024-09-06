@@ -514,3 +514,23 @@ textarea.form-control {
 }
 
 
+.poll-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.link-content a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+
+#professorContainer {
+  display: block;
+}
+
+.poll-content,
+.file-upload-content,
+.link-content {
+  display: block;
+}

@@ -201,55 +201,85 @@
   <script src="{{ url_for('static', filename='session_details.js') }}"></script>
 
   <script>
-    // JavaScript to handle switching between the main options and forms
-
-    // Buttons
-    const createPollBtn = document.getElementById('createPollBtn');
-    const uploadFileBtn = document.getElementById('uploadFileBtn');
-    const addLinkBtn = document.getElementById('addLinkBtn');
-
-    // Back buttons
-    const backToOptions1 = document.getElementById('backToOptions1');
-    const backToOptions2 = document.getElementById('backToOptions2');
-    const backToOptions3 = document.getElementById('backToOptions3');
-
-    // Sections
-    const mainOptions = document.getElementById('mainOptions');
-    const pollForm = document.getElementById('pollForm');
-    const uploadFileForm = document.getElementById('uploadFileForm');
-    const linkForm = document.getElementById('linkForm');
-
-    // Event Listeners
-    createPollBtn.addEventListener('click', () => {
-      mainOptions.style.display = 'none';
-      pollForm.style.display = 'block';
-    });
-
-    uploadFileBtn.addEventListener('click', () => {
-      mainOptions.style.display = 'none';
-      uploadFileForm.style.display = 'block';
-    });
-
-    addLinkBtn.addEventListener('click', () => {
-      mainOptions.style.display = 'none';
-      linkForm.style.display = 'block';
-    });
-
-    backToOptions1.addEventListener('click', () => {
-      pollForm.style.display = 'none';
-      mainOptions.style.display = 'block';
-    });
-
-    backToOptions2.addEventListener('click', () => {
-      uploadFileForm.style.display = 'none';
-      mainOptions.style.display = 'block';
-    });
-
-    backToOptions3.addEventListener('click', () => {
-      linkForm.style.display = 'none';
-      mainOptions.style.display = 'block';
+    document.addEventListener('DOMContentLoaded', function () {
+      const createPollBtn = document.getElementById('createPollBtn');
+      const uploadFileBtn = document.getElementById('uploadFileBtn');
+      const addLinkBtn = document.getElementById('addLinkBtn');
+  
+      // Back buttons
+      const backToOptions1 = document.getElementById('backToOptions1');
+      const backToOptions2 = document.getElementById('backToOptions2');
+      const backToOptions3 = document.getElementById('backToOptions3');
+  
+      // Sections
+      const mainOptions = document.getElementById('mainOptions');
+      const pollForm = document.getElementById('pollForm');
+      const uploadFileForm = document.getElementById('uploadFileForm');
+      const linkForm = document.getElementById('linkForm');
+  
+      // Event Listeners for showing forms
+      createPollBtn.addEventListener('click', () => {
+        mainOptions.style.display = 'none';
+        pollForm.style.display = 'block';
+      });
+  
+      uploadFileBtn.addEventListener('click', () => {
+        mainOptions.style.display = 'none';
+        uploadFileForm.style.display = 'block';
+      });
+  
+      addLinkBtn.addEventListener('click', () => {
+        mainOptions.style.display = 'none';
+        linkForm.style.display = 'block';
+      });
+  
+      // Back button functionality to return to the main options
+      backToOptions1.addEventListener('click', () => {
+        pollForm.style.display = 'none';
+        mainOptions.style.display = 'block';
+      });
+  
+      backToOptions2.addEventListener('click', () => {
+        uploadFileForm.style.display = 'none';
+        mainOptions.style.display = 'block';
+      });
+  
+      backToOptions3.addEventListener('click', () => {
+        linkForm.style.display = 'none';
+        mainOptions.style.display = 'block';
+      });
+  
+      // Modal management
+      const newPostModal = document.getElementById('newPostModal');
+      const newFeatureModal = document.getElementById('newFeatureModal');
+  
+      // Remove 'fade' class and modal-backdrop after the modal closes to prevent lingering effects
+      function resetModal(modal) {
+        modal.classList.remove('fade');
+        document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+          backdrop.remove();
+        });
+      }
+  
+      newPostModal.addEventListener('hidden.bs.modal', function () {
+        const form = newPostModal.querySelector('form');
+        if (form) {
+          form.reset();
+        }
+        resetModal(newPostModal);
+      });
+  
+      newFeatureModal.addEventListener('hidden.bs.modal', function () {
+        pollForm.style.display = 'none';
+        uploadFileForm.style.display = 'none';
+        linkForm.style.display = 'none';
+        mainOptions.style.display = 'block'; // Reset to main options view
+        resetModal(newFeatureModal);
+      });
     });
   </script>
+  
+  
 
 </body>
 </html>

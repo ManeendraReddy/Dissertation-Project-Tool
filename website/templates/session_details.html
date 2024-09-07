@@ -46,6 +46,8 @@
     </div>
   </div>
 
+
+  <div class="main-content-wrapper">
   <div class="content-container">
     <div class="session-id" style="color: #600064;"><b>Session ID: {{ session_id }}</b></div>
     <div class="title">{{ title }}</div>
@@ -56,12 +58,14 @@
       <!-- New posts will appear here -->
     </div>
     <a href="#" class="btn new-post-btn" data-bs-toggle="modal" data-bs-target="#newPostModal">+</a>
-
+    <!-- Add a hidden input to store the session ID -->
+    <!-- <input type="hidden" id="sessionId" value="{{ session_id }}"> -->
     {% else %}
     <div id="professorContainer" class="PContainer">
     </div>
     <a href="#" class="btn profbutton new-post" data-bs-toggle="modal" data-bs-target="#newFeatureModal">+</a>
     {% endif %}
+  </div>
   </div>
 
   <!-- Modal Structure for New Post -->

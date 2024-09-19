@@ -337,9 +337,9 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.success) {
                     // Update UI dynamically
+                    closePopupAutomatically();
                     addPollToUI(data.poll);
                     resetModal(newFeatureModal);
-                    togglePopupVisibility();
 
                     const modal = bootstrap.Modal.getInstance(document.getElementById('newFeatureModal'));
                     modal.hide();
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 for (let i = 0; i < inputs.length; i++) {
                     inputs[i].value = '';
                 }
-            }, 10); // 
+            }, 100); // 
 
 
         });
@@ -555,21 +555,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
       
-      
+    function closePopupAutomatically() {
+        setTimeout(function() {
+            pollForm.style.display = 'none';
+            
+            // Reset the modal
+            newFeatureModal.classList.remove('fade');
+            document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+                backdrop.remove();
+            });
+            
+            // Display main options again
+            mainOptions.style.display = 'block';
 
-
-        let isPopupVisible = false;
-
-        function togglePopupVisibility() {
-            const popup = document.getElementById('newPostModal');
-            if (popup.style.display === 'none') {
-                popup.style.display = 'block';
-                isPopupVisible = true;
-            } else {
-                popup.style.display = 'none';
-                isPopupVisible = false;
+            // Clear the poll form
+            const inputs = pollForm.getElementsByTagName('input');
+            for (let i = 0; i < inputs.length; i++) {
+                inputs[i].value = '';
             }
-        }
+
+            // Close the popup programmatically
+            const modal = bootstrap.Modal.getInstance(document.getElementById('newFeatureModal'));
+            modal.hide();
+
+            // Hide the modal backdrop
+            document.querySelector('.modal-backdrop').remove();
+        }, 10);
+    }
+
+
+        
         // Initialize modals
         var modalList = [].slice.call(document.querySelectorAll('.modal'))
         modalList.map(function (modal) {

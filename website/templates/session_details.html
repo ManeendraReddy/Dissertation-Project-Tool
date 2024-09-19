@@ -5,70 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Session Details</title>
 
+  <!-- Icons and Bootstrap -->
   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='session_details.css') }}">
 </head>
 <body>
 
+  <!-- Sidebar -->
   <div class="sidebar">
-
     <div class="btn-group dropstart">
       {% if current_user.is_authenticated %}
-        <a class="dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon" style="height: 40px;">
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
           <li><span class="dropdown-item-text"><strong>Name:</strong> {{ current_user.full_name }}</span></li>
           <li><span class="dropdown-item-text"><strong>Email:</strong> {{ current_user.email }}</span></li>
           <li><hr class="dropdown-divider"></li>
-          <div class="home">
+          <div class="HLbuttons">
             <li><a class="logout-button" id="logout" href="/">Home</a></li>
-          </div>
-          <div class="logout">
             <li><a class="logout-button" id="logout" href="/logout">Logout</a></li>
           </div>
         </ul>
       {% else %}
-        <a class="dropdown-toggle" href="#" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <img src="{{ url_for('static', filename='images/user.png') }}" alt="User Icon" style="height: 40px;">
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-          <li style="margin: 1rem; width: max-content;"><span class="dropdown-item-text"><strong>Name: </strong> Anonymous</span></li>
-          <a class="leave-session-btn" href="{{ url_for('join') }}">Leave Session</a>
+          <li><span class="dropdown-item-text"><strong>Name:</strong> Anonymous</span></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="leave-session-btn" href="{{ url_for('join') }}">Leave Session</a></li>
         </ul>
       {% endif %}
     </div>
   </div>
 
-
+  <!-- Main Content -->
   <div class="main-content-wrapper">
-  <div class="content-container">
-    <div class="session-id" style="color: #600064;"><b>Session ID: {{ session_id }}</b></div>
-    <div class="title">{{ title }}</div>
+    <div class="content-container">
+      <div class="session-id" style="color: #600064;"><b>Session ID: {{ session_id }}</b></div>
+      <div class="title">{{ title }}</div>
 
-    <!-- Container for posts (Only for unauthenticated users) -->
-    {% if not current_user.is_authenticated %}
-    <div id="postsContainer" class="mt-4">
-      <!-- New posts will appear here -->
+      <!-- For Unauthenticated Users -->
+      {% if not current_user.is_authenticated %}
+        <div id="postsContainer" class="mt-4">
+          {% for question in questions %}
+            <div class="question-box">
+              <p><strong>{{ question.user_email or 'Anonymous' }}:</strong> {{ question.question_text }}</p>
+              <p>Likes: {{ question.likes }} | Dislikes: {{ question.dislikes }}</p>
+            </div>
+          {% endfor %}
+        </div>
+
+        <a href="#" class="btn new-post-btn" data-bs-toggle="modal" data-bs-target="#newPostModal">+ New Post</a>
+      {% else %}
+        <!-- For Authenticated Users -->
+        <div id="professorContainer" class="PContainer"></div>
+        <a href="#" class="btn profbutton new-post" data-bs-toggle="modal" data-bs-target="#newFeatureModal">+ New Post</a>
+      {% endif %}
     </div>
-    <a href="#" class="btn new-post-btn" data-bs-toggle="modal" data-bs-target="#newPostModal">+</a>
-    <!-- Add a hidden input to store the session ID -->
-    <!-- <input type="hidden" id="sessionId" value="{{ session_id }}"> -->
-    {% else %}
-    <div id="professorContainer" class="PContainer">
-    </div>
-    <a href="#" class="btn profbutton new-post" data-bs-toggle="modal" data-bs-target="#newFeatureModal">+</a>
-    {% endif %}
-  </div>
   </div>
 
-  <!-- Modal Structure for New Post -->
+  <!-- Modal for Posting a New Question (Unauthenticated Users) -->
   <div class="modal fade" id="newPostModal" tabindex="-1" aria-labelledby="newPostModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -77,94 +80,68 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="newPostForm">
+          <form id="newPostForm" action="{{ url_for('post_question') }}" method="POST">
+            {{ form.hidden_tag() }}
+            <input type="hidden" name="sessionId" value="{{ session_id }}">
             <div class="mb-3">
               <label for="postTitle" class="form-label">Question</label>
-              <input type="text" class="form-control" id="postTitle" name="postTitle" placeholder="Enter your question here..." required>
+              {{ form.postTitle(class="form-control", placeholder="Enter your question here...", required=True) }}
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <div class="ms-auto">
-            <button type="submit" class="btn btn-primary" form="newPostForm">Publish</button>
-          </div>
+          <button type="submit" class="btn btn-primary" form="newPostForm">Publish</button>
         </div>
       </div>
     </div>
   </div>
 
-
-
-
-  <!-- Modal Structure for Logged-In Users -->
+  <!-- Modal for Additional Content (Authenticated Users) -->
   <div class="modal fade" id="newFeatureModal" tabindex="-1" aria-labelledby="newFeatureModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        
-        <!-- Modal Header -->
         <div class="modal-header">
           <h5 class="modal-title" id="newFeatureModalLabel">Add New Content</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        
-        <!-- Modal Body -->
         <div class="modal-body">
-          <!-- Main Menu -->
+          <!-- Options for Authenticated Users -->
           <div id="mainOptions">
             <ul class="list-unstyled">
-              <li>
-                <button class="btn btn-primary w-100 mb-2" id="createPollBtn">
-                  <i class="fas fa-poll"></i> Create Poll
-                </button>
-              </li>
-              <li>
-                <button class="btn btn-primary w-100 mb-2" id="uploadFileBtn">
-                  <i class="fas fa-upload"></i> Upload File
-                </button>
-              </li>
-              <li>
-                <button class="btn btn-primary w-100" id="addLinkBtn">
-                  <i class="fas fa-link"></i> Add Link
-                </button>
-              </li>
+              <li><button class="btn btn-primary w-100 mb-2" id="createPollBtn"><i class="fas fa-poll"></i> Create Poll</button></li>
+              <li><button class="btn btn-primary w-100 mb-2" id="uploadFileBtn"><i class="fas fa-upload"></i> Upload File</button></li>
+              <li><button class="btn btn-primary w-100" id="addLinkBtn"><i class="fas fa-link"></i> Add Link</button></li>
             </ul>
           </div>
-          
+
           <!-- Poll Form -->
-          <div id="pollForm" style="display: none;">
-            <form>
-              <div class="mb-3">
-                <label for="pollQuestion" class="form-label">Ask a Question</label>
-                <input type="text" class="form-control" id="pollQuestion" placeholder="Enter your poll question..." required>
-              </div>
-          
-              <div class="mb-3">
-                <!-- <label for="pollOption1" class="form-label">Option 1</label> -->
-                <input type="text" class="form-control" id="pollOption1" placeholder="Option 1" required>
-              </div>
-          
-              <div class="mb-3">
-                <!-- <label for="pollOption2" class="form-label">Option 2</label> -->
-                <input type="text" class="form-control" id="pollOption2" placeholder="Option 2" required>
-              </div>
-          
-              <div class="mb-3">
-                <!-- <label for="pollOption3" class="form-label">Option 3 (Optional)</label> -->
-                <input type="text" class="form-control" id="pollOption3" placeholder="Option 3 (Optional)">
-              </div>
-          
-              <div class="mb-3">
-                <!-- <label for="pollOption4" class="form-label">Option 4 (Optional)</label> -->
-                <input type="text" class="form-control" id="pollOption4" placeholder="Option 4 (Optional)">
-              </div>
-          
-              <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-secondary me-2" id="backToOptions1">Back</button>
-                <button type="submit" class="btn btn-primary">Create Poll</button>
-              </div>
-            </form>
-          </div>
-          
+                    <div id="pollForm" style="display: none;">
+                      <form>
+                        <div class="mb-3">
+                          <label for="Question" class="form-label">Ask a Question</label>
+                          <input type="text" class="form-control" id="pollQuestion" placeholder="Enter your poll question..." required>
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" id="pollOption1" placeholder="Option 1" required>
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" id="pollOption2" placeholder="Option 2" required>
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" id="pollOption3" placeholder="Option 3 (Optional)">
+                        </div>
+                        <div class="mb-3">
+                          <input type="text" class="form-control" id="pollOption4" placeholder="Option 4 (Optional)">
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-secondary clear-inputs" id="clearInputsBtn">Clear Inputs</button>
+                          <button type="button" class="btn btn-secondary me-2" id="backToOptions1">Back</button>
+                          <button type="submit" class="btn btn-primary">Create Poll</button>
+                          
+                        </div>
+                      </form>
+                    </div>
+
           <!-- Upload File Form -->
           <div id="uploadFileForm" style="display: none;">
             <form enctype="multipart/form-data">
@@ -173,35 +150,42 @@
                 <input type="file" class="form-control" id="fileUpload" required>
               </div>
               <div class="d-flex justify-content-end">
+                  <button type="button" class="btn btn-outline-secondary clear-inputs" id="clearInputsBtn">Clear Inputs</button>
                 <button type="button" class="btn btn-secondary me-2" id="backToOptions2">Back</button>
                 <button type="submit" class="btn btn-primary">Upload</button>
+                
               </div>
             </form>
           </div>
-          
+
           <!-- Add Link Form -->
           <div id="linkForm" style="display: none;">
             <form>
               <div class="mb-3">
                 <label for="linkTitle" class="form-label">Link Title</label>
-                <input type="text" class="form-control" id="linkTitle" placeholder="Enter a title for the link..." required>
+                <input type="text" class="form-control" id="linkTitle" placeholder="Enter the link title..." required>
               </div>
               <div class="mb-3">
-                <label for="linkURL" class="form-label">Link URL</label>
-                <input type="url" class="form-control" id="linkURL" placeholder="Enter the link URL..." required>
+                <label for="linkUrl" class="form-label">Link URL</label>
+                <input type="url" class="form-control" id="linkUrl" placeholder="Enter the URL..." required>
               </div>
               <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-outline-secondary clear-inputs" id="clearInputsBtn">Clear Inputs</button>
                 <button type="button" class="btn btn-secondary me-2" id="backToOptions3">Back</button>
                 <button type="submit" class="btn btn-primary">Add Link</button>
               </div>
             </form>
           </div>
+          
         </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <!-- Script Dependencies -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
   <script src="{{ url_for('static', filename='session_details.js') }}"></script>
 
   <script>

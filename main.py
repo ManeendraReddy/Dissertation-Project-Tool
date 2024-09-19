@@ -1,10 +1,12 @@
+import sqlite3
 from flask import Flask, render_template, redirect, url_for, flash, session, request, jsonify
-from forms import SignUpForm, LoginForm
+from forms import QuestionForm, SignUpForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from website import create_app
 from flask_login import current_user, login_required
 import random
-from website.models import Session, db
+from website.models import Poll, PollOption, Session, db, Question
+
 
 app = create_app()
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -53,7 +55,7 @@ def login():
             return redirect(url_for('home'))
     
     return render_template('login.html', form=form)
-
+ 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
     if request.method == 'POST':
@@ -111,11 +113,15 @@ def session_details(session_id, user_email):
     session_data = Session.query.filter_by(session_id=session_id).first_or_404()
     if session_data:
         title = session_data.title
+        # Create a new QuestionForm instance
+        question_form = QuestionForm()
+        
         # Pass additional information if needed
-        return render_template('session_details.html', title=title, session_id=session_id, user=current_user, user_email=user_email)
+        return render_template('session_details.html', title=title, session_id=session_id, user=current_user, user_email=user_email,form=question_form)
     else:
         flash('Session not found.', 'danger')
         return redirect(url_for('join'))
+
 
 @app.route('/delete_session/<session_id>', methods=['POST'])
 @login_required
@@ -127,6 +133,155 @@ def delete_session(session_id):
         return jsonify({'status': 'success'})
     else:
         return jsonify({'status': 'error'})
+    
+
+@app.route('/post_question', methods=['POST'])
+def post_question():
+    form = QuestionForm()
+    
+    if form.validate_on_submit():
+        session_id = int(request.form.get('sessionId'))
+        
+        try:
+            session = Session.query.filter_by(session_id=session_id).first()
+            
+            if session:
+                new_question = Question(
+                    session_id=session_id,
+                    question_text=form.postTitle.data,
+                    user_email=request.user.email if hasattr(request, 'user') else None
+                )
+                
+                db.session.add(new_question)
+                db.session.commit()
+                
+                flash('Question posted successfully!', 'success')
+                return redirect(url_for('session_details', session_id=session_id))
+            
+            else:
+                flash('Session not found.', 'error')
+        
+        except Exception as e:
+            db.session.rollback()
+            import traceback
+            print(f"Error occurred while posting question: {traceback.format_exc()}")
+            flash(f'An error occurred: {str(e)}', 'error')
+    
+    # Log form validation errors
+    if form.errors:
+        import json
+        print(f"Form validation errors: {json.dumps(form.errors)}")
+    
+    return redirect(url_for('session_details', session_id=request.form.get('sessionId')))
+
+
+
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/api/questions', methods=['GET'])
+def get_questions():
+    conn = get_db_connection()
+    questions = conn.execute('SELECT * FROM question WHERE session_id = ?', (request.args.get('session_id'),)).fetchall()
+    conn.close()
+    return jsonify([dict(q) for q in questions])
+
+@app.route('/api/questions', methods=['POST'])
+def create_question():
+    data = request.json
+    conn = get_db_connection()
+    conn.execute('INSERT INTO question (post_id, title, likes, dislikes, username, session_id) VALUES (?, ?, ?, ?, ?, ?)',
+                 (data['post_id'], data['title'], data['likes'], data['dislikes'], data['username'], data['session_id']))
+    conn.commit()
+    conn.close()
+    return jsonify({'status': 'success'}), 201
+
+@app.route('/api/questions/<int:post_id>', methods=['DELETE'])
+def delete_question(post_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM question WHERE post_id = ?', (post_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'status': 'success'}), 200
+
+
+@app.route('/api/create_poll', methods=['POST'])
+def create_poll():
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            session_id = data['session_id']
+            poll_question = data['poll_question']
+            options = data['options']
+
+            # Create poll
+            poll = Poll(session_id=session_id, question=poll_question)
+            db.session.add(poll)
+            db.session.flush()  # Flush to get the poll ID
+            
+            # Create poll options
+            for option_text in options:
+                if option_text:
+                    poll_option = PollOption(poll_id=poll.id, option_text=option_text)
+                    db.session.add(poll_option)
+            
+            db.session.commit()
+
+            # Fetch the newly created poll with its options
+            new_poll = Poll.query.filter_by(id=poll.id).first()
+
+            # Prepare response data
+            poll_data = {
+                'id': new_poll.id,
+                'question': new_poll.question,
+                'options': [
+                    {'option_text': option.option_text, 'votes': option.votes}
+                    for option in new_poll.options
+                ]
+            }
+
+            return jsonify({'success': True, 'poll': poll_data}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+    return jsonify({'success': False, 'error': 'Invalid request method'}), 405
+
+
+@app.route('/api/update_poll_vote', methods=['POST'])
+def update_poll_vote():
+    data = request.json
+    poll_id = data.get('poll_id')
+    option_index = data.get('option_index')
+
+    try:
+        # Fetch the poll and selected option
+        poll = Poll.query.filter_by(id=poll_id).first()
+        if not poll:
+            return jsonify({'success': False, 'error': 'Poll not found'}), 404
+        
+        selected_option = PollOption.query.filter_by(poll_id=poll_id, id=option_index + 1).first()
+        if not selected_option:
+            return jsonify({'success': False, 'error': 'Selected option not found'}), 400
+
+        # Update the vote count
+        selected_option.votes += 1
+        db.session.commit()
+
+        # Prepare response data
+        poll_data = {
+            'id': poll.id,
+            'options': [{'votes': opt.votes} for opt in poll.options]
+        }
+
+        return jsonify({'success': True, 'pollData': poll_data}), 200
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

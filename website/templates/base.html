@@ -21,12 +21,12 @@
   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
   
 
-
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
+      
       <a class="navbar-brand me-auto" id="home" href="/">
         <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="LOGO" style="height: 50px;">
       </a>
@@ -86,11 +86,61 @@
     <div class="container">{% block content %}{% endblock %}</div>
   </div>
 
-  
+   
 
-  <!-- Remove the container if you want to extend the Footer to full width. -->
+    <!-- Showcase -->
+    <section class="section-a">
+      <div id="hconatiner" class="container">
+        <div>
+          <h6>Our Vision</h6>
+          <p>
+            Our aim to build an interactive and dynamic learning environment that facilitates easy communication between instructors and students. We hope to increase learning's dynamism, collaboration, and responsiveness to each student's unique needs by creating an atmosphere in which they may actively engage, ask questions, and offer feedback. Through elements like upvoting, commenting, and personalised feedback, we foresee a system where student views are not only heard but also given importance.
+          </p>
+        </div>
+        <img src="https://shorturl.at/FG8kq" alt="" />
+      </div>
+    </section>
+
+    <!-- Large Text -->
+    <section id="about" class="section-b">
+      <div class="overlay">
+        <div class="section-b-inner py-5">
+          <h7 class="text-5 mt-1">Our Mission</h7>
+          <p class="mt-4">
+            Our goal is to create a user-friendly platform that improves learning by breaking down barriers to communication between instructors and students. Our goal is to provide students with tools that promote participation and interaction by providing simple features like commenting, question voting, and post management. Our aim is to offer instructors a comprehensive platform that facilitates the collection of student feedback, session management, and effective discussion organisation. In the end, we hope to provide a user-driven platform that meaningfully and successfully supports both teaching and learning.
+          </p>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="section-c">
+      <div class="gallery">
+        <a class="big"
+          ><img src="https://rb.gy/bgzzh4" alt=""
+        /></a>
+        <a class="big"
+          ><img src="https://rb.gy/c07ky5" alt=""
+        /></a>
+        <a class="big"
+          ><img src="https://img.freepik.com/free-vector/education-concept-illustration_114360-7908.jpg?ga=GA1.1.747755482.1726047852&semt=ais_hybrid" alt=""
+        /></a>
+        <a class="big"
+          ><img src="https://tinyurl.com/bdf4sb9k" alt=""
+        /></a>
+        <a class="big">
+          <img src="https://tinyurl.com/4vwes2nb" alt=""
+        /></a>
+        <a class="big"
+          ><img src="https://tinyurl.com/37c7w4ws" alt=""
+        /></a>
+      </div>
+    </section>
+
+    
+
 <div class="container1">
-
   <!-- Footer -->
   <footer
           class="text-center text-lg-start text-white"
@@ -109,9 +159,7 @@
                 style="width: 60px; background-color: #7c4dff; height: 2px"
                 />
             <p>
-              Here you can use rows and columns to organize your footer
-              content. Lorem ipsum dolor sit amet, consectetur adipisicing
-              elit.
+              Ready to dive in?
             </p>
           </div>
           <!-- Grid column -->
@@ -126,9 +174,9 @@
                 class="mb-4 mt-0 d-inline-block mx-auto"
                 style="width: 60px; background-color: #7c4dff; height: 2px"
                 />
-            <p>
+            <!-- <p>
               <a class="nav-footer mx-lg-2" id="about" href="/login">Your Account</a>
-            </p>
+            </p> -->
             <p>
               <a class="nav-footer mx-lg-2" id="about" href="/">Home</a>
             </p>
@@ -152,7 +200,6 @@
             <p><i class="fas fa-home mr-3"></i> Birmingham, UK</p>
             <p><i class="fas fa-envelope mr-3"></i> info@rlqt.com</p>
             <p><i class="fas fa-phone mr-3"></i> +44 8009 054294</p>
-            <p><i class="fas fa-print mr-3"></i> +44 8009 054295</p>
           </div>
           <!-- Grid column -->
         </div>
@@ -197,9 +244,9 @@
 
     <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2)">
       © 2024 Copyright:
-      <a class="nav-footer mx-lg-2" href="https://mdbootstrap.com/">RLQTool.com</a>
+      <a class="nav-footer mx-lg-2" href="http://127.0.0.1:5000/">RLQTool.com</a>
 
-      <button id="backToTopButton" class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-1vipfqj" tabindex="0" type="button" style="opacity: 1;display: contents; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1);"><img loading="eager" src="{{ url_for('static', filename='images/totopbutton.png') }}" alt="back to top" width="32" height="32" class="css-1s3f5c4"><span class="MuiTouchRipple-root css-w0pj6f"></span></button>
+      <button id="backToTopButton" class="MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButtonBase-root css-1vipfqj" tabindex="0" type="button" style="opacity: 1;display: contents; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1);"><img loading="eager" src="{{ url_for('static', filename='images/totopbutton.png') }}" alt="back to top" width="20" height="20" class="css-1s3f5c4"><span class="MuiTouchRipple-root css-w0pj6f"></span></button>
         
     </div>
   </footer>
@@ -223,8 +270,3 @@
 
 </body>
 </html>
-
-
-
-
-

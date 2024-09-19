@@ -47,48 +47,30 @@
             margin: 0 0 20px;
             font-size: 17px;
             line-height: 1.2;
+            width: inherit;
         }
 
         span {
-            color: #f0c674;
+            color: #fff;
         }
 
         i {
-            color: #8abeb7;
+            color: #fff;
         }
 
         div a {
             text-decoration: none;
+            font-weight: bold;
+            color: #f0c674;
+        }
+
+        div a:hover{
+            text-decoration: underline;
+            font-weight: normal;
         }
 
         b {
-            color: #81a2be;
+            color: #fff;
         }
 
-        a.avatar {
-            position: fixed;
-            bottom: 15px;
-            right: -100px;
-            animation: slide 0.5s 4.5s forwards;
-            display: block;
-            z-index: 4;
-        }
-
-        a.avatar img {
-            border-radius: 100%;
-            width: 44px;
-            border: 2px solid white;
-        }
-
-        @keyframes slide {
-            from {
-                right: -100px;
-                transform: rotate(360deg);
-                opacity: 0;
-            }
-            to {
-                right: 15px;
-                transform: rotate(0deg);
-                opacity: 1;
-            }
-        }
+    

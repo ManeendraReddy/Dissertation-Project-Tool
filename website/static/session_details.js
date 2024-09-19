@@ -279,20 +279,383 @@ document.addEventListener('DOMContentLoaded', function () {
         return div.innerHTML;
     }
 
-    document.querySelector('.new-post-btn').addEventListener('click', function () {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const createPollBtn = document.getElementById('createPollBtn');
+    createPollBtn.addEventListener('click', function() {
+        // Show the poll form
+        pollForm.style.display = 'block';
+        mainOptions.style.display = 'none';
+
+        // Reset the modal
+        newFeatureModal.classList.remove('fade');
+        document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+            backdrop.remove();
+        });
+    });
+
+
+
+    const pollForm = document.getElementById('pollForm');
+    if (pollForm) {
+        pollForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const pollQuestion = document.getElementById('pollQuestion').value;
+            const option1 = document.getElementById('pollOption1').value;
+            const option2 = document.getElementById('pollOption2').value;
+            const option3 = document.getElementById('pollOption3').value || '';
+            const option4 = document.getElementById('pollOption4').value || '';
+
+            const url = '/api/create_poll'; // Adjust this URL as needed
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: document.querySelector('.session-id > b').textContent.split(': ')[1],
+                    poll_question: pollQuestion,
+                    options: [option1, option2, option3, option4]
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI dynamically
+                    addPollToUI(data.poll);
+                    resetModal(newFeatureModal);
+                    togglePopupVisibility();
+
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('newFeatureModal'));
+                    modal.hide();
+                    document.querySelector('.modal-backdrop').remove();
+                    
+                    // Reset form fields
+                    pollForm.reset();
+                    
+                    // Display main options again
+                    document.getElementById('mainOptions').style.display = 'block';
+                    pollForm.style.display = 'none';
+
+
+                } else {
+                    alert('Failed to create poll: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // alert('An error occurred while creating the poll.');
+            });
+
+
+
+
+            setTimeout(function() {
+                // Hide the popup
+                pollForm.style.display = 'none';
+                
+                // Reset the modal
+                newFeatureModal.classList.remove('fade');
+                document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+                    backdrop.remove();
+                });
+                
+                // Display main options again
+                mainOptions.style.display = 'block';
+
+                // Clear the poll form
+                const inputs = pollForm.getElementsByTagName('input');
+                for (let i = 0; i < inputs.length; i++) {
+                    inputs[i].value = '';
+                }
+            }, 10); // 
+
+
+        });
+    }
+
+    function addPollToUI(pollData) {
+        const professorContainer = document.getElementById('professorContainer');
+        
+        // Check if a poll container already exists
+        const existingPollContainer = professorContainer.querySelector('.poll-container');
+        if (!existingPollContainer) {
+            // Create a new poll container if it doesn't exist
+            const pollContainer = document.createElement('div');
+            pollContainer.className = 'poll-container';
+            professorContainer.appendChild(pollContainer);
+        }
+    
+        const pollElement = document.createElement('div');
+        pollElement.className = 'poll-box';
+        
+        const pollContent = 
+            `<h4>${pollData.question}</h4>
+            ${pollData.options.map((option, index) => 
+                `<p class="poll-option">
+                    <span class="circle"></span>
+                    <span class="poll-option-text">${escapeHTML(option.option_text)}</span>
+                    (${option.votes} votes)
+                </p>`
+            ).join('')}
+           `;
+            
+        pollElement.innerHTML = pollContent;
+        professorContainer.querySelector('.poll-container').appendChild(pollElement);
+    
+        // Initialize poll interactions
+        initializePollInteractions(pollElement, pollData);
+        document.getElementById('newPostModal').style.display = 'none';
+        document.querySelector('.modal-backdrop').remove();
+
+    }
+    
+    function initializePollInteractions(pollElement, pollData) {
+        const options = pollElement.querySelectorAll('.poll-option');
+        const pollId = pollData.id; // Assuming pollData has an 'id' property
+    
+        options.forEach((option, index) => {
+            option.addEventListener('click', function() {
+                selectPollOption(this, index, pollData, pollId);
+            });
+        });
+    
+        // Check if a selection has been made previously
+        const storedSelection = localStorage.getItem(`poll_selection_${pollId}`);
+        if (storedSelection !== null) {
+            const selectedOption = options[parseInt(storedSelection)];
+            selectPollOption(selectedOption, parseInt(storedSelection), pollData, pollId);
+        }
+    }
+    
+    
+    function selectPollOption(option, selectedIndex, pollId) {
+        console.log("Selecting option:", selectedIndex);
+        console.log("Current pollId:", pollId);
+      
+        const options = option.parentNode.querySelectorAll('.poll-option');
+      
+        let previouslySelectedOption;
+      
+        // Check if an option was previously selected
+        options.forEach((opt, index) => {
+          if (opt.classList.contains('selected')) {
+            previouslySelectedOption = opt;
+          }
+          opt.disabled = false;
+        });
+      
+        // Update previously selected option if exists
+        if (previouslySelectedOption) {
+          console.log("Updating previously selected option");
+          previouslySelectedOption.classList.remove('selected');
+      
+          // Decrease vote count for previously selected option
+          const prevVotesSpan = previouslySelectedOption.querySelector('.vote-count');
+          let currentPrevVotes = parseInt(prevVotesSpan.textContent.match(/\d+/)[0]);
+          console.log("Previous votes:", currentPrevVotes);
+          if (currentPrevVotes > 0) {
+            currentPrevVotes--;
+            prevVotesSpan.textContent = `${prevVotesSpan.textContent.replace(currentPrevVotes + 1, currentPrevVotes)}`;
+          } else {
+            prevVotesSpan.textContent = '0 votes'; // Reset to placeholder if zero
+          }
+        }
+      
+        // Update newly selected option
+        option.classList.add('selected');
+        option.disabled = true;
+      
+        // Increase vote count for newly selected option
+        const votesSpan = option.querySelector('.vote-count');
+        let currentVotes = parseInt(votesSpan.textContent.match(/\d+/)[0]) || 0;
+        console.log("Current votes:", currentVotes);
+        currentVotes++;
+        votesSpan.textContent = `${votesSpan.textContent.replace(currentVotes, currentVotes + 1)}`;
+      
+        // Send AJAX request to server to update vote count
+        sendVoteUpdate(pollId, selectedIndex);
+      
+        const circleElement = option.querySelector('.circle');
+        const maxVotes = Math.max(...Array.from(options).map(opt => parseInt(opt.querySelector('.vote-count').textContent.match(/\d+/)[0])));
+        const votePercentage = (currentVotes / maxVotes) * 100;
+        circleElement.style.width = `${votePercentage}%`;
+      
+        // Adjust the text color based on the percentage
+        const textElement = option.querySelector('.poll-option-text');
+        const textColor = calculateTextColor(votePercentage);
+        textElement.style.color = textColor;
+      
+        // Update UI immediately
+        updatePollUI(pollData);
+      }
+      
+      function sendVoteUpdate(pollId, selectedIndex) {
+        console.log("Sending vote update:", pollId, selectedIndex);
+        const url = '/api/update_poll_vote'; // Make sure this URL is correct
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            poll_id: pollId,
+            option_index: selectedIndex
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Received response:", data);
+          if (!data.success) {
+            console.error('Failed to update vote:', data.error);
+          } else {
+            // Update UI with new poll data
+            updatePollUI(data.pollData);
+          }
+        })
+        .catch(error => {
+          console.error('Error updating vote:', error);
+        });
+      }
+      
+      function updatePollUI(pollData) {
+        const options = document.querySelectorAll('.poll-option');
+        options.forEach((opt, index) => {
+          opt.querySelector('span:last-child').textContent = `${pollData.options[index].votes} votes`;
+      
+          const circleElement = opt.querySelector('.circle');
+          const maxVotes = Math.max(...pollData.options.map(opt => opt.votes));
+          const votePercentage = (pollData.options[index].votes / maxVotes) * 100;
+          circleElement.style.width = `${votePercentage}%`;
+      
+          const textElement = opt.querySelector('.poll-option-text');
+          const textColor = calculateTextColor(votePercentage);
+          textElement.style.color = textColor;
+        });
+      }
+    
+
+
+    //   document.addEventListener('DOMContentLoaded', function () {
+
+
+      
+      
+
+
+        let isPopupVisible = false;
+
+        function togglePopupVisibility() {
+            const popup = document.getElementById('newPostModal');
+            if (popup.style.display === 'none') {
+                popup.style.display = 'block';
+                isPopupVisible = true;
+            } else {
+                popup.style.display = 'none';
+                isPopupVisible = false;
+            }
+        }
+        // Initialize modals
+        var modalList = [].slice.call(document.querySelectorAll('.modal'))
+        modalList.map(function (modal) {
+          return new bootstrap.Modal(modal)
+        })
+    
+        // Add this code after the existing JavaScript
+
+            // Function to clear inputs in the current modal
+            function clearModalInputs() {
+                const currentModal = document.querySelector('.modal.show');
+                if (currentModal) {
+                    try {
+                        const forms = currentModal.querySelectorAll('form');
+                        forms.forEach(form => {
+                            form.reset();
+                        });
+                    } catch (error) {
+                        console.error('Error clearing modal inputs:', error);
+                    }
+                } else {
+                    console.warn('No modal is currently open');
+                }
+            }
+
+            function closeModal() {
+                const currentModal = document.querySelector('.modal.show');
+                if (currentModal) {
+                    const modalInstance = bootstrap.Modal.getInstance(currentModal);
+                    modalInstance.hide();
+                }
+            }
+            
+            // Event listener for clear inputs button
+            document.getElementById('clearInputsBtn').addEventListener('click', clearModalInputs);
+
+            // Event listener for modal close
+            document.getElementById('newFeatureModal').addEventListener('hidden.bs.modal', function () {
+                try {
+                    const forms = document.querySelectorAll('#pollForm, #uploadFileForm, #linkForm');
+                    forms.forEach(form => {
+                        form.reset();
+                    });
+                } catch (error) {
+                    console.error('Error resetting forms:', error);
+                }
+            });
+
+    // });
+    
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting && entry.target.id === 'sessionDetails') {
+                togglePopupVisibility();
+            }
+        });
+    }, { threshold: 0 });
+
+    const sessionDetailsElement = document.getElementById('sessionDetails');
+    if (sessionDetailsElement) {
+        observer.observe(sessionDetailsElement);
+    }
+    
+
+      document.querySelector('.new-post-btn').addEventListener('click', function () {
         const newPostForm = document.getElementById('newPostForm');
         const modalLabel = document.getElementById('newPostModalLabel');
-
+    
+        // Clear input fields
+        document.querySelectorAll('#newPostForm input, #newPostForm textarea').forEach(input => {
+            input.value = '';
+        });
+    
+        // Reset form fields
         newPostForm.reset();
         delete newPostForm.dataset.editingPostId;
         modalLabel.textContent = 'Post a New Question';
-
+    
         const newPostModal = new bootstrap.Modal(document.getElementById('newPostModal'));
         newPostModal.show();
-
+    
         document.querySelector('.modal-backdrop').style.transition = 'none';
-
     });
+    
+    
 
     document.getElementById('newPostForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -304,7 +667,6 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Question cannot be empty.');
             return;
         }
-    
         if (postId) {
             const postCard = document.querySelector(`[data-post-id="${postId}"]`);
             const postTitleElement = postCard.querySelector('.card-content h5');

@@ -33,10 +33,10 @@ body {
 .new-post-btn {
   position: fixed;
   bottom: 20px;
-  right: 3rem;
+  right: 1rem;
   background-color: #240053;
-  padding: 10px 20px;
-  font-size: 1.5rem;
+  padding: 10px 15px;
+  font-size: 1rem;
   border-radius: 9999px;
   border-color: #240053;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -88,11 +88,11 @@ body {
   color: #fff;
   border-color: #dc3545;
   font-size: 14px;
-  padding: 8px 20px;
+  padding: 8px 8px;
   border-radius: 5px;
   text-decoration: none;
   transition: 0.3s background-color;
-  margin-left: 2rem;
+  margin: 2rem;
 }
 
 .leave-session-btn:disabled {
@@ -108,6 +108,19 @@ body {
 a {
   color: #600064;
   text-decoration: underline;
+}
+
+.dropdown-menu.show {
+  display: block;
+  width: max-content;
+}
+
+
+.HLbuttons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 1rem 0;
 }
 
 .home {
@@ -269,26 +282,7 @@ h5 {
   text-decoration: underline;
 }
 
-.new-post-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 3rem;
-  background-color: #240053;
-  padding: 10px 20px;
-  font-size: 1.5rem;
-  border-radius: 9999px;
-  border-color: #240053;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  z-index: 1000;
-  font-weight: bold;
-  color: #fff;
-}
 
-.new-post-btn:hover {
-  background-color: #600064;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  color: #fff;
-}
 
 .fa-regular, .far {
   font-family: "Font Awesome 6 Free";
@@ -473,7 +467,7 @@ textarea.form-control {
 .comment-options-container .btn {
   background: #f8f9fc;
   border: none;
-  padding: .5px 3px;
+  padding: .2px 2px;
 }
 
 .comment-options-container .btn i {
@@ -485,10 +479,10 @@ textarea.form-control {
 .new-post {
   position: fixed;
   bottom: 20px;
-  right: 3rem;
+  right: 1rem;
   background-color: #240053;
-  padding: 10px 20px;
-  font-size: 1.5rem;
+  padding: 10px 15px;
+  font-size: 1rem;
   border-radius: 9999px;
   border-color: #240053;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
@@ -517,7 +511,11 @@ textarea.form-control {
 }
 
 #professorContainer {
-  display: block;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  scroll-behavior: smooth;
+  margin-top: 2rem;
 }
 
 .poll-content,
@@ -551,3 +549,125 @@ textarea.form-control {
 .main-content-wrapper::-webkit-scrollbar-track {
   background-color: #f8f9fa;
 }
+
+
+.poll-box {
+  background-color: #240053;
+  color: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: fit-content;
+}
+
+.poll-box h4 {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+span.poll-option-text {
+  margin-right: auto;
+}
+
+.poll-box p {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.poll-container {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(250px, 1fr));
+  gap: 1.5rem;
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+  .poll-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .poll-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.poll-options {
+  margin-top: 10px;
+}
+
+.poll-options input[type="radio"] {
+  margin-right: 10px;
+}
+
+.poll-options label {
+  font-size: 1rem;
+  cursor: pointer;
+  color: #000;
+}
+
+.poll-option.selected {
+  background-color: #e6f3ff; 
+  color: #000;
+  /* width: max-content; */
+  padding: 3px;
+}
+
+.poll-option.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.poll-option {
+  position: relative;
+  display: flex;
+    align-items: center;
+}
+
+button#clearInputsBtn {
+  margin-right: .5rem;
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fec006;
+  margin-right: 10px;
+  transition: all 0.3s ease;
+}
+
+.poll-option.selected .circle {
+  background-color: #600064;
+}
+
+.poll-option:hover .circle {
+  opacity: 0.7;
+}
+
+
+/* .poll-option.selected::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 120%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #fec006;
+  z-index: 1;
+} */
+
+/* .poll-option:hover::before {
+  opacity: 0.7;
+} */

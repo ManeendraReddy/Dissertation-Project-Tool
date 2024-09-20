@@ -186,10 +186,14 @@
       font-size: 1rem;
       font-weight: bold;
       color: #fff;
+      text-decoration: none;
     }
 
     .session-details a:hover {
       color: #600064;
+      text-decoration: none;
+      background-color: #fff;
+      padding: 2px;
     }
 
     .input-group {

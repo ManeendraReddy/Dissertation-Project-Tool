@@ -56,10 +56,14 @@
   color: #fff;
   font-weight: 500;
   position: relative;
+  text-decoration: none;
 }
 
 .nav-footer:hover, .nav-footer.active {
   color: #600064;
+  background-color: #fff;
+  text-decoration: none;
+  padding: 2px 2px;
 }
 
 @media (min-width: 991px) {
@@ -333,7 +337,17 @@ h8 {
 
 
 .col-md-3.col-lg-4.col-xl-3.mx-auto p {
-  font-size: 3.5rem;
+  font-size: 2rem;
   font-weight: bold;
   font-style: oblique;
+  color: #600064;
+  background-color: #fff;
+  border-radius: 5px;
+  height: 5rem;
+  padding: 15px 18px;
+}
+
+
+b{
+  margin-right: .5rem;
 }

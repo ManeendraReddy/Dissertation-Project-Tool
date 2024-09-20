@@ -1,13 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialize interactions for a single post
     function initializePostInteractions(postCard) {
         const likeIcon = postCard.querySelector('.like-icon');
         const dislikeIcon = postCard.querySelector('.dislike-icon');
         const commentIcon = postCard.querySelector('.fa-comment');
         const commentCountElement = postCard.querySelector('.fa-comment + span');
         const postId = postCard.dataset.postId;
-
-        // Initialize the like and dislike states based on localStorage
         if (localStorage.getItem(`likedPost_${postId}`)) {
             likeIcon.classList.add('liked');
             likeIcon.style.color = '#fec006';
@@ -16,8 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
             dislikeIcon.classList.add('disliked');
             dislikeIcon.style.color = '#fec006';
         }
-
-        // Like button click event
         likeIcon.addEventListener('click', function () {
             if (localStorage.getItem(`likedPost_${postId}`)) {
                 likeIcon.classList.remove('liked');
@@ -28,14 +23,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 likeIcon.classList.add('liked');
                 likeIcon.style.color = '#fec006';
                 likeIcon.querySelector('span').textContent++;
-
                 if (localStorage.getItem(`dislikedPost_${postId}`)) {
                     dislikeIcon.classList.remove('disliked');
                     dislikeIcon.style.color = '';
                     dislikeIcon.querySelector('span').textContent--;
                     localStorage.removeItem(`dislikedPost_${postId}`);
                 }
-
                 localStorage.setItem(`likedPost_${postId}`, true);
             }
 
@@ -410,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 `<p class="poll-option">
                     <span class="circle"></span>
                     <span class="poll-option-text">${escapeHTML(option.option_text)}</span>
-                    (${option.votes} votes)
+                    <span class="vote-count">(<strong>${option.votes}</strong> vote)</span>
                 </p>`
             ).join('')}
            `;
@@ -423,11 +416,21 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('newPostModal').style.display = 'none';
         document.querySelector('.modal-backdrop').remove();
 
+
+        // Add a new element for the total vote count
+        const totalVoteCounter = document.createElement('div');
+        totalVoteCounter.className = 'total-vote-counter';
+        totalVoteCounter.textContent = 'Total Votes: 0';
+        professorContainer.querySelector('.poll-container').appendChild(totalVoteCounter);
+
+
     }
     
     function initializePollInteractions(pollElement, pollData) {
         const options = pollElement.querySelectorAll('.poll-option');
         const pollId = pollData.id; // Assuming pollData has an 'id' property
+
+        
     
         options.forEach((option, index) => {
             option.addEventListener('click', function() {
@@ -462,19 +465,21 @@ document.addEventListener('DOMContentLoaded', function () {
       
         // Update previously selected option if exists
         if (previouslySelectedOption) {
-          console.log("Updating previously selected option");
-          previouslySelectedOption.classList.remove('selected');
+        //   console.log("Updating previously selected option");
+          
       
           // Decrease vote count for previously selected option
           const prevVotesSpan = previouslySelectedOption.querySelector('.vote-count');
           let currentPrevVotes = parseInt(prevVotesSpan.textContent.match(/\d+/)[0]);
-          console.log("Previous votes:", currentPrevVotes);
+        //   console.log("Previous votes:", currentPrevVotes);
           if (currentPrevVotes > 0) {
             currentPrevVotes--;
             prevVotesSpan.textContent = `${prevVotesSpan.textContent.replace(currentPrevVotes + 1, currentPrevVotes)}`;
           } else {
-            prevVotesSpan.textContent = '0 votes'; // Reset to placeholder if zero
-          }
+            prevVotesSpan.textContent = `(${currentPrevVotes} vote)`;
+        }
+
+            previouslySelectedOption.classList.remove('selected');
         }
       
         // Update newly selected option
@@ -486,20 +491,26 @@ document.addEventListener('DOMContentLoaded', function () {
         let currentVotes = parseInt(votesSpan.textContent.match(/\d+/)[0]) || 0;
         console.log("Current votes:", currentVotes);
         currentVotes++;
-        votesSpan.textContent = `${votesSpan.textContent.replace(currentVotes, currentVotes + 1)}`;
+        votesSpan.innerHTML = `(<strong>${currentVotes}</strong> vote)`;
+
+        localStorage.setItem(`poll_selection_${pollId}`, selectedIndex);
+
       
         // Send AJAX request to server to update vote count
         sendVoteUpdate(pollId, selectedIndex);
+
+        updateLocalStorage(pollId, selectedIndex);
+
       
-        const circleElement = option.querySelector('.circle');
-        const maxVotes = Math.max(...Array.from(options).map(opt => parseInt(opt.querySelector('.vote-count').textContent.match(/\d+/)[0])));
-        const votePercentage = (currentVotes / maxVotes) * 100;
-        circleElement.style.width = `${votePercentage}%`;
+        // const circleElement = option.querySelector('.circle');
+        // const maxVotes = Math.max(...Array.from(options).map(opt => parseInt(opt.querySelector('.vote-count').textContent.match(/\d+/)[0])));
+        // const votePercentage = (currentVotes / maxVotes) * 100;
+        // circleElement.style.width = `${votePercentage}%`;
       
-        // Adjust the text color based on the percentage
-        const textElement = option.querySelector('.poll-option-text');
-        const textColor = calculateTextColor(votePercentage);
-        textElement.style.color = textColor;
+        // // Adjust the text color based on the percentage
+        // const textElement = option.querySelector('.poll-option-text');
+        // const textColor = calculateTextColor(votePercentage);
+        // textElement.style.color = textColor;
       
         // Update UI immediately
         updatePollUI(pollData);
@@ -532,6 +543,20 @@ document.addEventListener('DOMContentLoaded', function () {
           console.error('Error updating vote:', error);
         });
       }
+
+
+      function updateLocalStorage(pollId, selectedIndex) {
+        const options = document.querySelectorAll('.poll-option');
+        options.forEach((option, index) => {
+            if (index === selectedIndex) {
+                const votesSpan = option.querySelector('.vote-count');
+                const votes = parseInt(votesSpan.textContent.match(/\d+/)[0]);
+                localStorage.setItem(`${pollId}-votes`, votes);
+                }
+            });
+        }
+
+
       
       function updatePollUI(pollData) {
         const options = document.querySelectorAll('.poll-option');
@@ -547,6 +572,19 @@ document.addEventListener('DOMContentLoaded', function () {
           const textColor = calculateTextColor(votePercentage);
           textElement.style.color = textColor;
         });
+
+        // Update the total vote counter
+            const totalVoteCounter = document.querySelector('.total-vote-counter');
+            const totalVotes = pollData.options.reduce((sum, option) => sum + option.votes, 0);
+            totalVoteCounter.textContent = `Total Votes: ${totalVotes}`;
+
+            options.forEach((option, index) => {
+                const votesSpan = option.querySelector('.vote-count');
+                const votes = parseInt(votesSpan.textContent.match(/\d+/)[0]);
+                localStorage.setItem(`${pollId}-votes_${index}`, votes);
+            });
+        
+
       }
     
 

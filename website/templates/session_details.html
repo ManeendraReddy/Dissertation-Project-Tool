@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Session Details</title>
-
-  <!-- Icons and Bootstrap -->
   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
@@ -13,10 +11,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='session_details.css') }}">
+  
 </head>
 <body>
 
-  <!-- Sidebar -->
   <div class="sidebar">
     <div class="btn-group dropstart">
       {% if current_user.is_authenticated %}
@@ -45,13 +43,11 @@
     </div>
   </div>
 
-  <!-- Main Content -->
   <div class="main-content-wrapper">
     <div class="content-container">
       <div class="session-id" style="color: #600064;"><b>Session ID: {{ session_id }}</b></div>
       <div class="title">{{ title }}</div>
 
-      <!-- For Unauthenticated Users -->
       {% if not current_user.is_authenticated %}
         <div id="postsContainer" class="mt-4">
           {% for question in questions %}
@@ -64,14 +60,12 @@
 
         <a href="#" class="btn new-post-btn" data-bs-toggle="modal" data-bs-target="#newPostModal">+ New Post</a>
       {% else %}
-        <!-- For Authenticated Users -->
         <div id="professorContainer" class="PContainer"></div>
         <a href="#" class="btn profbutton new-post" data-bs-toggle="modal" data-bs-target="#newFeatureModal">+ New Post</a>
       {% endif %}
     </div>
   </div>
 
-  <!-- Modal for Posting a New Question (Unauthenticated Users) -->
   <div class="modal fade" id="newPostModal" tabindex="-1" aria-labelledby="newPostModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -80,23 +74,25 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <form id="newPostForm" action="{{ url_for('post_question') }}" method="POST">
-            {{ form.hidden_tag() }}
-            <input type="hidden" name="sessionId" value="{{ session_id }}">
-            <div class="mb-3">
-              <label for="postTitle" class="form-label">Question</label>
-              {{ form.postTitle(class="form-control", placeholder="Enter your question here...", required=True) }}
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary" form="newPostForm">Publish</button>
+          <div class="container">
+            <form id="newPostForm" action="{{ url_for('post_question') }}" method="POST">
+              {{ form.hidden_tag() }}
+              <input type="hidden" name="sessionId" value="{{ session_id }}">
+              <div class="mb-3">
+                <label for="postTitle" class="form-label">Ask a Question</label>
+                {{ form.postTitle(class="form-control", placeholder="Enter your question...", required=True) }}
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  
 
-  <!-- Modal for Additional Content (Authenticated Users) -->
   <div class="modal fade" id="newFeatureModal" tabindex="-1" aria-labelledby="newFeatureModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -105,7 +101,6 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <!-- Options for Authenticated Users -->
           <div id="mainOptions">
             <ul class="list-unstyled">
               <li><button class="btn btn-primary w-100 mb-2" id="createPollBtn"><i class="fas fa-poll"></i> Create Poll</button></li>
@@ -114,7 +109,6 @@
             </ul>
           </div>
 
-          <!-- Poll Form -->
                     <div id="pollForm" style="display: none;">
                       <form>
                         <div class="mb-3">
@@ -142,23 +136,20 @@
                       </form>
                     </div>
 
-          <!-- Upload File Form -->
-          <div id="uploadFileForm" style="display: none;">
-            <form enctype="multipart/form-data">
-              <div class="mb-3">
-                <label for="fileUpload" class="form-label">Choose File</label>
-                <input type="file" class="form-control" id="fileUpload" required>
-              </div>
-              <div class="d-flex justify-content-end">
-                  <button type="button" class="btn btn-outline-secondary clear-inputs" id="clearInputsBtn">Clear Inputs</button>
-                <button type="button" class="btn btn-secondary me-2" id="backToOptions2">Back</button>
-                <button type="submit" class="btn btn-primary">Upload</button>
-                
-              </div>
-            </form>
-          </div>
-
-          <!-- Add Link Form -->
+                    <div id="uploadFileForm" style="display: none;">
+                      <form enctype="multipart/form-data">
+                        <div class="mb-3">
+                          <label for="fileUpload" class="form-label">Choose File</label>
+                          <input type="file" class="form-control" id="fileUpload" required>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                          <button type="button" class="btn btn-secondary me-2" id="backToOptions2">Back</button>
+                          <button type="submit" class="btn btn-primary">Upload</button>
+                          
+                        </div>
+                      </form>
+                    </div>
+                  
           <div id="linkForm" style="display: none;">
             <form>
               <div class="mb-3">
@@ -182,7 +173,20 @@
     </div>
   </div>
 
-  <!-- Script Dependencies -->
+
+
+  <!-- <div class="container">
+    <form id="newPostForm" action="{{ url_for('post_question') }}" method="POST">
+    {{ form.hidden_tag() }}
+    <input type="hidden" name="sessionId" value="{{ session_id }}">
+    <div class="mb-3">
+        <label for="postTitle" class="form-label">Ask a Question</label>
+        {{ form.postTitle(class="form-control", placeholder="Enter your question...", required=True) }}
+    </div>
+      <button type="submit" class="btn btn-primary" form="newPostForm">Submit</button>
+    </form>
+  </div> -->
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
@@ -202,7 +206,6 @@
       // Sections
       const mainOptions = document.getElementById('mainOptions');
       const pollForm = document.getElementById('pollForm');
-      const uploadFileForm = document.getElementById('uploadFileForm');
       const linkForm = document.getElementById('linkForm');
   
       // Event Listeners for showing forms
@@ -221,7 +224,6 @@
         linkForm.style.display = 'block';
       });
   
-      // Back button functionality to return to the main options
       backToOptions1.addEventListener('click', () => {
         pollForm.style.display = 'none';
         mainOptions.style.display = 'block';
@@ -237,11 +239,9 @@
         mainOptions.style.display = 'block';
       });
   
-      // Modal management
       const newPostModal = document.getElementById('newPostModal');
       const newFeatureModal = document.getElementById('newFeatureModal');
   
-      // Remove 'fade' class and modal-backdrop after the modal closes to prevent lingering effects
       function resetModal(modal) {
         modal.classList.remove('fade');
         document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
@@ -261,13 +261,12 @@
         pollForm.style.display = 'none';
         uploadFileForm.style.display = 'none';
         linkForm.style.display = 'none';
-        mainOptions.style.display = 'block'; // Reset to main options view
+        mainOptions.style.display = 'block';
         resetModal(newFeatureModal);
       });
+
     });
   </script>
-  
-  
 
 </body>
 </html>

@@ -274,8 +274,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+    const newPostForm = document.getElementById('newPostForm');
 
+    newPostForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission behavior
 
+        const formData = new FormData(newPostForm); // Gather the form data
+        const sessionId = document.querySelector('input[name="sessionId"]').value; // Get the sessionId from the hidden input
+
+        // if (!sessionId) {
+        //     alert('Session ID is missing.');
+        //     return;
+        // }
+
+        formData.append('sessionId', sessionId);  // Ensure sessionId is included
+
+        fetch(newPostForm.action, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json()) // Assuming Flask returns JSON
+        .then(data => {
+            if (data.success) {
+                alert('Question posted successfully!');
+                newPostForm.reset(); // Reset the form after successful submission
+                const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
+                modal.hide(); // Close the modal after submission
+            } else {
+                alert('Error posting question');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
 
 
 
@@ -501,18 +533,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         updateLocalStorage(pollId, selectedIndex);
 
-      
-        // const circleElement = option.querySelector('.circle');
-        // const maxVotes = Math.max(...Array.from(options).map(opt => parseInt(opt.querySelector('.vote-count').textContent.match(/\d+/)[0])));
-        // const votePercentage = (currentVotes / maxVotes) * 100;
-        // circleElement.style.width = `${votePercentage}%`;
-      
-        // // Adjust the text color based on the percentage
-        // const textElement = option.querySelector('.poll-option-text');
-        // const textColor = calculateTextColor(votePercentage);
-        // textElement.style.color = textColor;
-      
-        // Update UI immediately
         updatePollUI(pollData);
       }
       
@@ -587,12 +607,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       }
     
-
-
-    //   document.addEventListener('DOMContentLoaded', function () {
-
-
-      
+ 
     function closePopupAutomatically() {
         setTimeout(function() {
             pollForm.style.display = 'none';
@@ -707,8 +722,32 @@ document.addEventListener('DOMContentLoaded', function () {
     
         document.querySelector('.modal-backdrop').style.transition = 'none';
     });
+
+
+    const sessionId = document.querySelector('.session-id').textContent;
+  
+  fetchQuestions(sessionId);
+
+  function fetchQuestions(sessionId) {
+    fetch(`/api/questions?session_id=${sessionId}`)
+      .then(response => response.json())
+      .then(data => {
+        const postsContainer = document.getElementById('postsContainer');
+        postsContainer.innerHTML = '';
+        data.forEach(question => {
+          const questionBox = document.createElement('div');
+          questionBox.className = 'question-box';
+          questionBox.innerHTML = `
+            <p><strong>${question.user_email || 'Anonymous'}:</strong> ${question.question_text}</p>
+            <p>Likes: ${question.likes} | Dislikes: ${question.dislikes}</p>
+          `;
+          postsContainer.appendChild(questionBox);
+        });
+      })
+      .catch(error => console.error('Error fetching questions:', error));
+  }
     
-    
+  
 
     document.getElementById('newPostForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -780,7 +819,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const postsContainer = document.getElementById('postsContainer');
             postsContainer.appendChild(newPost);
     
-            // Initialize interactions for the new post
             initializePostInteractions(newPost);
         }
     
@@ -792,8 +830,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         sortPosts();
     });
+
     
-    // Initialize existing posts
+    
     document.querySelectorAll('.post-card').forEach(initializePostInteractions);
     sortPosts();
 });

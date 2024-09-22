@@ -4,6 +4,13 @@ from os import path
 from flask_login import LoginManager
 from flask_mail import Mail
 
+# from sqlalchemy import create_engine
+# from sqlalchemy.orm import scoped_session, sessionmaker
+
+# engine = create_engine('sqlite:///your_database.db', pool_size=10, max_overflow=20)
+# db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+
+
 db = SQLAlchemy()
 mail = Mail()
 DB_NAME = "database.db"
@@ -13,6 +20,8 @@ def create_app():
 
     app.config['SECRET_KEY'] = 'your_secret_key'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 465

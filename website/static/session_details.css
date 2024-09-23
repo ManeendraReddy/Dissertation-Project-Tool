@@ -661,21 +661,15 @@ div#newFeatureModal {
 }
 
 
+.id {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: nowrap;
+}
 
-/* <form id="newPostForm" action="{{ url_for('post_question') }}" method="POST">
-                {{ form.hidden_tag() }}
-                <input type="hidden" name="sessionId" value="{{ session_id }}">
-                <div class="mb-3">
-                    <label for="postTitle" class="form-label">Ask a Question</label>
-                    {{ form.postTitle(class="form-control", placeholder="Enter your question...", required=True) }}
-                </div>
-                {% if not current_user.is_authenticated %}
-                <div class="mb-3">
-                    <label for="userEmail" class="form-label">Email (Optional)</label>
-                    <input type="email" class="form-control" name="userEmail" placeholder="Enter your email">
-                </div>
-                {% endif %}
-                <div class="modal-footer">
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form> */
+.id input {
+  width: 6rem;
+  padding: 0 .5rem;
+}

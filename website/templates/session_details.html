@@ -77,7 +77,11 @@
           <div class="container">
             <form id="newPostForm" action="{{ url_for('post_question') }}" method="POST">
               {{ form.hidden_tag() }}
-              <input type="hidden" name="sessionId" value="{{ session_id }}">
+
+              <div class="id"><b>Session ID :</b>
+                <input type="text" name="sessionId" value="{{ session_id }}" readonly>
+              </div>
+          
               <div class="mb-3">
                 <label for="postTitle" class="form-label">Ask a Question</label>
                 {{ form.postTitle(class="form-control", placeholder="Enter your question...", required=True) }}

@@ -282,12 +282,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(newPostForm); // Gather the form data
         const sessionId = document.querySelector('input[name="sessionId"]').value; // Get the sessionId from the hidden input
 
-        // if (!sessionId) {
-        //     alert('Session ID is missing.');
-        //     return;
-        // }
-
         formData.append('sessionId', sessionId);  // Ensure sessionId is included
+
+        if (!sessionId) {
+            alert('Session ID is missing.');
+            return;
+        }
 
         fetch(newPostForm.action, {
             method: 'POST',

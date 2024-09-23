@@ -672,4 +672,5 @@ div#newFeatureModal {
 .id input {
   width: 6rem;
   padding: 0 .5rem;
+  cursor: not-allowed;
 }

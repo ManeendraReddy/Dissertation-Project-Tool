@@ -5,62 +5,58 @@ document.addEventListener('DOMContentLoaded', function () {
         const commentIcon = postCard.querySelector('.fa-comment');
         const commentCountElement = postCard.querySelector('.fa-comment + span');
         const postId = postCard.dataset.postId;
-        if (localStorage.getItem(`likedPost_${postId}`)) {
+        if (postCard.dataset.liked) {
             likeIcon.classList.add('liked');
             likeIcon.style.color = '#fec006';
         }
-        if (localStorage.getItem(`dislikedPost_${postId}`)) {
+        if (postCard.dataset.disliked) {
             dislikeIcon.classList.add('disliked');
             dislikeIcon.style.color = '#fec006';
         }
+
         likeIcon.addEventListener('click', function () {
-            if (localStorage.getItem(`likedPost_${postId}`)) {
-                likeIcon.classList.remove('liked');
-                likeIcon.style.color = '';
-                likeIcon.querySelector('span').textContent--;
-                localStorage.removeItem(`likedPost_${postId}`);
-            } else {
-                likeIcon.classList.add('liked');
-                likeIcon.style.color = '#fec006';
-                likeIcon.querySelector('span').textContent++;
-                if (localStorage.getItem(`dislikedPost_${postId}`)) {
-                    dislikeIcon.classList.remove('disliked');
-                    dislikeIcon.style.color = '';
-                    dislikeIcon.querySelector('span').textContent--;
-                    localStorage.removeItem(`dislikedPost_${postId}`);
-                }
-                localStorage.setItem(`likedPost_${postId}`, true);
-            }
-
-            sortPosts();
-        });
-
-        // Dislike button click event
-        dislikeIcon.addEventListener('click', function () {
-            if (localStorage.getItem(`dislikedPost_${postId}`)) {
+        if (postCard.dataset.liked) {
+            likeIcon.classList.remove('liked');
+            likeIcon.style.color = '';
+            likeIcon.querySelector('span').textContent--;
+            postCard.dataset.liked = '';
+        } else {
+            likeIcon.classList.add('liked');
+            likeIcon.style.color = '#fec006';
+            likeIcon.querySelector('span').textContent++;
+            if (postCard.dataset.disliked) {
                 dislikeIcon.classList.remove('disliked');
                 dislikeIcon.style.color = '';
                 dislikeIcon.querySelector('span').textContent--;
-                localStorage.removeItem(`dislikedPost_${postId}`);
+                postCard.dataset.disliked = '';
+            }
+            postCard.dataset.liked = 'true';
+        }
+
+        sortPosts();
+    });
+        dislikeIcon.addEventListener('click', function () {
+            if (postCard.dataset.disliked) {
+                dislikeIcon.classList.remove('disliked');
+                dislikeIcon.style.color = '';
+                dislikeIcon.querySelector('span').textContent--;
+                postCard.dataset.disliked = '';
             } else {
                 dislikeIcon.classList.add('disliked');
                 dislikeIcon.style.color = '#fec006';
                 dislikeIcon.querySelector('span').textContent++;
-
-                if (localStorage.getItem(`likedPost_${postId}`)) {
+                if (postCard.dataset.liked) {
                     likeIcon.classList.remove('liked');
                     likeIcon.style.color = '';
                     likeIcon.querySelector('span').textContent--;
-                    localStorage.removeItem(`likedPost_${postId}`);
+                    postCard.dataset.liked = '';
                 }
-
-                localStorage.setItem(`dislikedPost_${postId}`, true);
+                postCard.dataset.disliked = 'true';
             }
-
+    
             sortPosts();
         });
 
-        // Post options dropdown toggle
         const postOptionsToggle = postCard.querySelector('.post-options-toggle');
         const postOptionsDropdown = postCard.querySelector('.post-options-dropdown');
 
@@ -79,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
             event.stopPropagation();
         });
 
-        // Edit post button click event
         postCard.querySelector('.edit-post-btn').addEventListener('click', function () {
             const modal = new bootstrap.Modal(document.getElementById('newPostModal'));
             const postTitleElement = postCard.querySelector('.card-content h5');
@@ -93,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.show();
         });
 
-        // Delete post button click event
         postCard.querySelector('.delete-post-btn').addEventListener('click', function () {
             if (confirm('Are you sure you want to delete this post?')) {
                 postCard.remove();
@@ -101,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Handle inline comment input and publishing
         const addCommentBtn = postCard.querySelector('.add-comment');
         addCommentBtn.addEventListener('click', function () {
             const commentInputContainer = document.createElement('div');
@@ -122,10 +115,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const publishCommentBtn = commentInputContainer.querySelector('.publish-comment');
             const cancelCommentBtn = commentInputContainer.querySelector('.cancel-comment');
 
-            // Handle publishing the comment
             publishCommentBtn.addEventListener('click', function () {
                 const commentText = commentInputContainer.querySelector('.comment-input').value.trim();
-                const userName = prompt('Enter your name (if interested):', 'Anonymous'); // Prompt for user name
+                const userName = prompt('Enter your name (if interested):', 'Anonymous');
                 
                 if (commentText) {
                     const commentList = postCard.querySelector('.comment-list') || createCommentList(postCard);
@@ -152,21 +144,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     `;
                     commentList.appendChild(newComment);
 
-                    // Move the "Add comment" button below the newly posted comment
                     commentList.appendChild(addCommentBtn);
                     commentInputContainer.remove();
 
-                    // Update the comment count
                     updateCommentCount(postCard, 1);
 
-                    // Initialize comment interactions for edit and delete
                     initializeCommentInteractions(newComment, postCard);
                 } else {
                     alert('Comment cannot be empty.');
                 }
             });
 
-            // Handle cancelling the comment
             cancelCommentBtn.addEventListener('click', function () {
                 commentInputContainer.replaceWith(addCommentBtn);
             });
@@ -272,17 +260,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return div.innerHTML;
     }
 
-
-
     const newPostForm = document.getElementById('newPostForm');
 
     newPostForm.addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+        event.preventDefault();
 
-        const formData = new FormData(newPostForm); // Gather the form data
-        const sessionId = document.querySelector('input[name="sessionId"]').value; // Get the sessionId from the hidden input
+        const formData = new FormData(newPostForm);
+        const sessionId = document.querySelector('input[name="sessionId"]').value;
 
-        formData.append('sessionId', sessionId);  // Ensure sessionId is included
+        formData.append('sessionId', sessionId);
 
         if (!sessionId) {
             alert('Session ID is missing.');
@@ -293,13 +279,13 @@ document.addEventListener('DOMContentLoaded', function () {
             method: 'POST',
             body: formData,
         })
-        .then(response => response.json()) // Assuming Flask returns JSON
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
                 alert('Question posted successfully!');
-                newPostForm.reset(); // Reset the form after successful submission
+                newPostForm.reset(); 
                 const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
-                modal.hide(); // Close the modal after submission
+                modal.hide(); 
             } else {
                 alert('Error posting question');
             }
@@ -310,30 +296,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-
-
-
-
-
-
-
-
-
+    // ------------------------------------------------------------------------------------------------
 
     const createPollBtn = document.getElementById('createPollBtn');
     createPollBtn.addEventListener('click', function() {
-        // Show the poll form
         pollForm.style.display = 'block';
         mainOptions.style.display = 'none';
-
-        // Reset the modal
         newFeatureModal.classList.remove('fade');
         document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
             backdrop.remove();
         });
     });
-
-
 
     const pollForm = document.getElementById('pollForm');
     if (pollForm) {
@@ -346,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const option3 = document.getElementById('pollOption3').value || '';
             const option4 = document.getElementById('pollOption4').value || '';
 
-            const url = '/api/create_poll'; // Adjust this URL as needed
+            const url = '/api/create_poll';
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -361,71 +334,47 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update UI dynamically
                     closePopupAutomatically();
                     addPollToUI(data.poll);
                     resetModal(newFeatureModal);
-
                     const modal = bootstrap.Modal.getInstance(document.getElementById('newFeatureModal'));
                     modal.hide();
                     document.querySelector('.modal-backdrop').remove();
-                    
-                    // Reset form fields
                     pollForm.reset();
-                    
-                    // Display main options again
                     document.getElementById('mainOptions').style.display = 'block';
                     pollForm.style.display = 'none';
-
-
                 } else {
                     alert('Failed to create poll: ' + data.error);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                // alert('An error occurred while creating the poll.');
             });
 
-
-
-
             setTimeout(function() {
-                // Hide the popup
                 pollForm.style.display = 'none';
-                
-                // Reset the modal
                 newFeatureModal.classList.remove('fade');
                 document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
                     backdrop.remove();
                 });
-                
-                // Display main options again
                 mainOptions.style.display = 'block';
 
-                // Clear the poll form
                 const inputs = pollForm.getElementsByTagName('input');
                 for (let i = 0; i < inputs.length; i++) {
                     inputs[i].value = '';
                 }
-            }, 100); // 
-
-
+            }, 100);
         });
     }
 
     function addPollToUI(pollData) {
         const professorContainer = document.getElementById('professorContainer');
-        
-        // Check if a poll container already exists
         const existingPollContainer = professorContainer.querySelector('.poll-container');
         if (!existingPollContainer) {
-            // Create a new poll container if it doesn't exist
             const pollContainer = document.createElement('div');
             pollContainer.className = 'poll-container';
             professorContainer.appendChild(pollContainer);
         }
-    
         const pollElement = document.createElement('div');
         pollElement.className = 'poll-box';
         
@@ -443,41 +392,32 @@ document.addEventListener('DOMContentLoaded', function () {
         pollElement.innerHTML = pollContent;
         professorContainer.querySelector('.poll-container').appendChild(pollElement);
     
-        // Initialize poll interactions
         initializePollInteractions(pollElement, pollData);
         document.getElementById('newPostModal').style.display = 'none';
         document.querySelector('.modal-backdrop').remove();
 
-
-        // Add a new element for the total vote count
         const totalVoteCounter = document.createElement('div');
         totalVoteCounter.className = 'total-vote-counter';
         totalVoteCounter.textContent = 'Total Votes: 0';
         professorContainer.querySelector('.poll-container').appendChild(totalVoteCounter);
-
-
     }
     
     function initializePollInteractions(pollElement, pollData) {
         const options = pollElement.querySelectorAll('.poll-option');
-        const pollId = pollData.id; // Assuming pollData has an 'id' property
+        const pollId = pollData.id;
 
-        
-    
         options.forEach((option, index) => {
             option.addEventListener('click', function() {
                 selectPollOption(this, index, pollData, pollId);
             });
         });
     
-        // Check if a selection has been made previously
         const storedSelection = localStorage.getItem(`poll_selection_${pollId}`);
         if (storedSelection !== null) {
             const selectedOption = options[parseInt(storedSelection)];
             selectPollOption(selectedOption, parseInt(storedSelection), pollData, pollId);
         }
     }
-    
     
     function selectPollOption(option, selectedIndex, pollId) {
         console.log("Selecting option:", selectedIndex);
@@ -486,8 +426,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const options = option.parentNode.querySelectorAll('.poll-option');
       
         let previouslySelectedOption;
-      
-        // Check if an option was previously selected
         options.forEach((opt, index) => {
           if (opt.classList.contains('selected')) {
             previouslySelectedOption = opt;
@@ -495,50 +433,36 @@ document.addEventListener('DOMContentLoaded', function () {
           opt.disabled = false;
         });
       
-        // Update previously selected option if exists
         if (previouslySelectedOption) {
-        //   console.log("Updating previously selected option");
           
-      
-          // Decrease vote count for previously selected option
           const prevVotesSpan = previouslySelectedOption.querySelector('.vote-count');
           let currentPrevVotes = parseInt(prevVotesSpan.textContent.match(/\d+/)[0]);
-        //   console.log("Previous votes:", currentPrevVotes);
           if (currentPrevVotes > 0) {
             currentPrevVotes--;
             prevVotesSpan.textContent = `${prevVotesSpan.textContent.replace(currentPrevVotes + 1, currentPrevVotes)}`;
           } else {
             prevVotesSpan.textContent = `(${currentPrevVotes} vote)`;
         }
-
             previouslySelectedOption.classList.remove('selected');
         }
       
-        // Update newly selected option
         option.classList.add('selected');
         option.disabled = true;
       
-        // Increase vote count for newly selected option
         const votesSpan = option.querySelector('.vote-count');
         let currentVotes = parseInt(votesSpan.textContent.match(/\d+/)[0]) || 0;
         console.log("Current votes:", currentVotes);
         currentVotes++;
         votesSpan.innerHTML = `(<strong>${currentVotes}</strong> vote)`;
-
         localStorage.setItem(`poll_selection_${pollId}`, selectedIndex);
-
-      
-        // Send AJAX request to server to update vote count
         sendVoteUpdate(pollId, selectedIndex);
-
         updateLocalStorage(pollId, selectedIndex);
-
         updatePollUI(pollData);
       }
       
       function sendVoteUpdate(pollId, selectedIndex) {
         console.log("Sending vote update:", pollId, selectedIndex);
-        const url = '/api/update_poll_vote'; // Make sure this URL is correct
+        const url = '/api/update_poll_vote';
         fetch(url, {
           method: 'POST',
           headers: {
@@ -555,7 +479,6 @@ document.addEventListener('DOMContentLoaded', function () {
           if (!data.success) {
             console.error('Failed to update vote:', data.error);
           } else {
-            // Update UI with new poll data
             updatePollUI(data.pollData);
           }
         })
@@ -563,7 +486,6 @@ document.addEventListener('DOMContentLoaded', function () {
           console.error('Error updating vote:', error);
         });
       }
-
 
       function updateLocalStorage(pollId, selectedIndex) {
         const options = document.querySelectorAll('.poll-option');
@@ -576,8 +498,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-
-      
       function updatePollUI(pollData) {
         const options = document.querySelectorAll('.poll-option');
         options.forEach((opt, index) => {
@@ -593,7 +513,6 @@ document.addEventListener('DOMContentLoaded', function () {
           textElement.style.color = textColor;
         });
 
-        // Update the total vote counter
             const totalVoteCounter = document.querySelector('.total-vote-counter');
             const totalVotes = pollData.options.reduce((sum, option) => sum + option.votes, 0);
             totalVoteCounter.textContent = `Total Votes: ${totalVotes}`;
@@ -604,7 +523,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 localStorage.setItem(`${pollId}-votes_${index}`, votes);
             });
         
-
       }
     
  
@@ -612,41 +530,27 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(function() {
             pollForm.style.display = 'none';
             
-            // Reset the modal
             newFeatureModal.classList.remove('fade');
             document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
                 backdrop.remove();
             });
-            
-            // Display main options again
             mainOptions.style.display = 'block';
 
-            // Clear the poll form
             const inputs = pollForm.getElementsByTagName('input');
             for (let i = 0; i < inputs.length; i++) {
                 inputs[i].value = '';
             }
-
-            // Close the popup programmatically
             const modal = bootstrap.Modal.getInstance(document.getElementById('newFeatureModal'));
             modal.hide();
-
-            // Hide the modal backdrop
             document.querySelector('.modal-backdrop').remove();
         }, 10);
     }
 
-
-        
-        // Initialize modals
         var modalList = [].slice.call(document.querySelectorAll('.modal'))
         modalList.map(function (modal) {
           return new bootstrap.Modal(modal)
         })
     
-        // Add this code after the existing JavaScript
-
-            // Function to clear inputs in the current modal
             function clearModalInputs() {
                 const currentModal = document.querySelector('.modal.show');
                 if (currentModal) {
@@ -671,10 +575,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
             
-            // Event listener for clear inputs button
             document.getElementById('clearInputsBtn').addEventListener('click', clearModalInputs);
 
-            // Event listener for modal close
             document.getElementById('newFeatureModal').addEventListener('hidden.bs.modal', function () {
                 try {
                     const forms = document.querySelectorAll('#pollForm, #uploadFileForm, #linkForm');
@@ -684,10 +586,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 } catch (error) {
                     console.error('Error resetting forms:', error);
                 }
-            });
-
-    // });
-    
+            });    
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -701,18 +600,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sessionDetailsElement) {
         observer.observe(sessionDetailsElement);
     }
-    
-
       document.querySelector('.new-post-btn').addEventListener('click', function () {
         const newPostForm = document.getElementById('newPostForm');
         const modalLabel = document.getElementById('newPostModalLabel');
     
-        // Clear input fields
         document.querySelectorAll('#newPostForm input, #newPostForm textarea').forEach(input => {
             input.value = '';
         });
     
-        // Reset form fields
         newPostForm.reset();
         delete newPostForm.dataset.editingPostId;
         modalLabel.textContent = 'Post a New Question';
@@ -724,28 +619,30 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    const sessionId = document.querySelector('.session-id').textContent;
+//     const sessionId = document.querySelector('.session-id').textContent;
   
-  fetchQuestions(sessionId);
+//   fetchQuestions(sessionId);
 
-  function fetchQuestions(sessionId) {
-    fetch(`/api/questions?session_id=${sessionId}`)
-      .then(response => response.json())
-      .then(data => {
-        const postsContainer = document.getElementById('postsContainer');
-        postsContainer.innerHTML = '';
-        data.forEach(question => {
-          const questionBox = document.createElement('div');
-          questionBox.className = 'question-box';
-          questionBox.innerHTML = `
-            <p><strong>${question.user_email || 'Anonymous'}:</strong> ${question.question_text}</p>
-            <p>Likes: ${question.likes} | Dislikes: ${question.dislikes}</p>
-          `;
-          postsContainer.appendChild(questionBox);
-        });
-      })
-      .catch(error => console.error('Error fetching questions:', error));
-  }
+//   function fetchQuestions(sessionId) {
+//     fetch(`/api/questions?session_id=${sessionId}`)
+//       .then(response => response.json())
+//       .then(data => {
+//         const postsContainer = document.getElementById('postsContainer');
+//         postsContainer.innerHTML = '';
+//         data.forEach(question => {
+//           const questionBox = document.createElement('div');
+//           questionBox.className = 'question-box';
+//           questionBox.innerHTML = `
+//             <p><strong>${question.user_email || 'Anonymous'}:</strong> ${question.question_text}</p>
+//             <p>Likes: ${question.likes} | Dislikes: ${question.dislikes}</p>
+//           `;
+//           postsContainer.appendChild(questionBox);
+//         });
+//       })
+//       .catch(error => console.error('Error fetching questions:', error));
+//   }
+    
+
     
   
 
@@ -786,7 +683,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         <i class="fa-regular fa-user"></i>
                         <div>
                             <div class="user-name">Anonymous</div>
-                            <div class="post-time">${formattedDate}</div>
                         </div>
                     </div>
                     <div class="post-options-container">
@@ -831,7 +727,6 @@ document.addEventListener('DOMContentLoaded', function () {
         sortPosts();
     });
 
-    
     
     document.querySelectorAll('.post-card').forEach(initializePostInteractions);
     sortPosts();

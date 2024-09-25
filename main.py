@@ -1,7 +1,7 @@
 import os
 import sqlite3
 import traceback
-from flask import Flask, render_template, redirect, url_for, flash, session, request, jsonify
+from flask import Flask, make_response, render_template, redirect, url_for, flash, session, request, jsonify
 from forms import QuestionForm, SignUpForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from website import create_app
@@ -9,6 +9,7 @@ from flask_login import current_user, login_required
 import random
 from website.models import Poll, PollOption, Session, User, db, Question
 from werkzeug.utils import secure_filename
+
 
 app = create_app()
 app.config['SECRET_KEY'] = 'your_secret_key'
@@ -60,7 +61,7 @@ def join():
         session_data = Session.query.filter_by(session_id=session_id).first()
         
         if session_data:
-            user_email = session.get('email', 'guest')  # Get email from session or set as 'guest'
+            user_email = session.get('email', 'guest')
             return redirect(url_for('session_details', session_id=session_data.session_id, user_email=user_email))
         else:
             flash('Invalid session code. Please try again.', 'danger')
@@ -110,12 +111,11 @@ def session_details(session_id, user_email):
     questions = Question.query.filter_by(session_id=session_id).all()
 
 
+
     if session_data:
         title = session_data.title
-        # Create a new QuestionForm instance
         question_form = QuestionForm()
         
-        # Pass additional information if needed
         return render_template('session_details.html', title=title, session_id=session_id, user=current_user, user_email=user_email,form=question_form, uploaded_files=uploaded_files, questions=questions)
     else:
         flash('Session not found.', 'danger')
@@ -208,7 +208,6 @@ def create_poll():
             poll_question = data['poll_question']
             options = data['options']
 
-            # Create poll
             poll = Poll(session_id=session_id, question=poll_question)
             db.session.add(poll)
             db.session.flush()  
@@ -265,7 +264,22 @@ def update_poll_vote():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
-    
+
+
+@app.route('/submit_question', methods=['POST'])
+def submit_question():
+    question_text = request.form['question_text']
+    session_id = request.cookies.get('session_id')
+
+    if session_id:
+        new_question = Question(question_text=question_text, session_id=session_id, likes=0, dislikes=0)
+        db.session.add(new_question)
+        db.session.commit()
+
+        return {"status": "success"}, 200
+
+    return {"status": "error"}, 400
+
 
 
 if __name__ == '__main__':

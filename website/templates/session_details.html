@@ -52,8 +52,9 @@
       {% if not current_user.is_authenticated %}
       <div id="postsContainer" class="mt-4">
 
+        
         {% for question in questions %}
-          <div class="post-card">
+        <div class="post-card" data-post-id="{{ question.id }}" data-likes="{{ question.likes }}" data-dislikes="{{ question.dislikes }}">
             <div class="card-header">
               <div class="user-info">
                   <i class="fa-regular fa-user"></i>
@@ -65,33 +66,38 @@
               <div class="post-options-container">
                   <i class="fas fa-ellipsis-v post-options-toggle"></i>
                   <div class="post-options-dropdown d-none">
-                    <button class="edit-post-btn btn btn-sm btn-link" onclick="openEditModal('{{ question.id }}')">Edit post</button>
-                    <button class="delete-post-btn btn btn-sm btn-link">Delete post</button>
+                    <button class="edit-post-btn btn btn-sm btn-link">Edit post</button>
+                    <button class="delete-post-btn btn btn-sm btn-link" data-session-id="{{ session_id }}" data-user-email="{{ user_email }}">Delete post</button>
+
                   </div>
               </div>
-          </div>
-          <div class="card-actions">
-              <div class="interaction-icons">
-                  <div class="icon like-icon">
-                      <i class="fas fa-thumbs-up"></i>{{ question.likes }}
-                  </div>
-                  <div class="icon dislike-icon">
-                      <i class="fas fa-thumbs-down"></i>{{ question.dislikes }}
-                  </div>
-                  <div class="icon">
-                      <i class="fas fa-comment"></i><span>0</span>
-                  </div>
-              </div>
-              <div class="add-comment">Add comment</div>
-          </div>
+            </div>
+            <div class="card-actions">
+                <div class="interaction-icons">
+                    <div class="icon like-icon">
+                        <i class="fas fa-thumbs-up"></i>{{ question.likes }}
+                    </div>
+                    <div class="icon dislike-icon">
+                        <i class="fas fa-thumbs-down"></i>{{ question.dislikes }}
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-comment"></i><span>0</span>
+                    </div>
+                </div>
+                <div class="add-comment">Add comment</div>
+            </div>
           </div>
         {% endfor %}
 
-    </div>
+
+
+      </div>
   
         <a href="#" class="btn new-post-btn" data-bs-toggle="modal" data-bs-target="#newPostModal">+ New Post</a>
       {% else %}
-        <div id="professorContainer" class="PContainer"></div>
+        <div id="professorContainer" class="PContainer">
+
+        </div>
         <a href="#" class="btn profbutton new-post" data-bs-toggle="modal" data-bs-target="#newFeatureModal">+ New Post</a>
       {% endif %}
     </div>
@@ -108,6 +114,7 @@
           <div class="container">
             <form id="newPostForm" action="{{ url_for('post_question') }}" method="POST">
               {{ form.hidden_tag() }}
+              <input type="hidden" name="postId" value="">
 
               <div class="id"><b>Session ID :</b>
                 <input type="text" name="sessionId" value="{{ session_id }}" readonly>
@@ -220,17 +227,14 @@
       const uploadFileBtn = document.getElementById('uploadFileBtn');
       const addLinkBtn = document.getElementById('addLinkBtn');
   
-      // Back buttons
       const backToOptions1 = document.getElementById('backToOptions1');
       const backToOptions2 = document.getElementById('backToOptions2');
       const backToOptions3 = document.getElementById('backToOptions3');
   
-      // Sections
       const mainOptions = document.getElementById('mainOptions');
       const pollForm = document.getElementById('pollForm');
       const linkForm = document.getElementById('linkForm');
   
-      // Event Listeners for showing forms
       createPollBtn.addEventListener('click', () => {
         mainOptions.style.display = 'none';
         pollForm.style.display = 'block';
@@ -286,6 +290,10 @@
         mainOptions.style.display = 'block';
         resetModal(newFeatureModal);
       });
+
+
+
+      
 
     });
   </script>

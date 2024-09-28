@@ -103,23 +103,24 @@ def get_sessions():
 
 
 @app.route('/session/<int:session_id>/<string:user_email>', methods=['GET'])
-# @login_required
 def session_details(session_id, user_email):
-    # Fetch session details from the database
     session_data = Session.query.filter_by(session_id=session_id).first_or_404()
     uploaded_files = session.get('uploaded_files', {}).get(session_id, [])
     questions = Question.query.filter_by(session_id=session_id).all()
-
-
 
     if session_data:
         title = session_data.title
         question_form = QuestionForm()
         
-        return render_template('session_details.html', title=title, session_id=session_id, user=current_user, user_email=user_email,form=question_form, uploaded_files=uploaded_files, questions=questions)
+        # Refresh the session to ensure we have the latest data
+        db.session.refresh(session_data)
+        db.session.expunge_all()
+
+        return render_template('session_details.html', title=title, session_id=session_id, user=current_user, user_email=user_email, form=question_form, uploaded_files=uploaded_files, questions=questions)
     else:
         flash('Session not found.', 'danger')
         return redirect(url_for('join'))
+
 
 
 @app.route('/delete_session/<session_id>', methods=['POST'])
@@ -190,13 +191,19 @@ def create_question():
     conn.close()
     return jsonify({'status': 'success'}), 201
 
-@app.route('/api/questions/<int:post_id>', methods=['DELETE'])
-def delete_question(post_id):
-    conn = get_db_connection()
-    conn.execute('DELETE FROM question WHERE post_id = ?', (post_id,))
-    conn.commit()
-    conn.close()
-    return jsonify({'status': 'success'}), 200
+
+
+
+
+@app.route('/api/delete_post/<post_id>/<session_id>', methods=['DELETE'])
+def delete_post(post_id, session_id):
+    post = Question.query.filter_by(id=post_id, session_id=session_id).first()
+    if post:
+        db.session.delete(post)
+        db.session.commit()
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': 'Post not found'}), 404
+
 
 
 @app.route('/api/create_poll', methods=['POST'])
@@ -280,6 +287,23 @@ def submit_question():
 
     return {"status": "error"}, 400
 
+
+@app.route('/edit_post/<int:post_id>', methods=['POST'])
+def edit_post(post_id):
+    data = request.get_json()
+    session_id = data.get('sessionId')
+    new_question_text = data.get('question_text')
+
+    # Find the post by post_id and session_id in the database
+    post = Question.query.filter_by(id=post_id, session_id=session_id).first()
+    
+    if post:
+        # Update the question text
+        post.question_text = new_question_text
+        db.session.commit()
+        return jsonify({"success": True})
+    
+    return jsonify({"success": False}), 404
 
 
 if __name__ == '__main__':

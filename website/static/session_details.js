@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {    
+    
     function initializePostInteractions(postCard) {
         const likeIcon = postCard.querySelector('.like-icon');
         const dislikeIcon = postCard.querySelector('.dislike-icon');
@@ -90,10 +91,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
         postCard.querySelector('.delete-post-btn').addEventListener('click', function () {
             if (confirm('Are you sure you want to delete this post?')) {
+                const postId = postCard.dataset.postId;
+                deletePostFromServer(postId);
                 postCard.remove();
                 sortPosts();
             }
         });
+
+        function deletePostFromServer(postId) {
+            const sessionId = document.querySelector('input[name="sessionId"]').value;
+            const url = `/api/delete_post/${postId}/${sessionId}`;
+        
+            fetch(url, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    console.log('Post deleted successfully');
+                    refreshUI(postId);
+                } else {
+                    console.error('Failed to delete post:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting post:', error);
+            });
+            
+        }
+        
+        function refreshUI(postId) {
+            const postCard = document.querySelector(`[data-post-id="${postId}"]`);
+            if (postCard) {
+                postCard.remove();
+                sortPosts();
+            }
+        }
+        
 
         const addCommentBtn = postCard.querySelector('.add-comment');
         addCommentBtn.addEventListener('click', function () {
@@ -117,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             publishCommentBtn.addEventListener('click', function () {
                 const commentText = commentInputContainer.querySelector('.comment-input').value.trim();
-                const userName = prompt('Enter your name (if interested):', 'Anonymous');
+                const userName = 'Anonymous'
                 
                 if (commentText) {
                     const commentList = postCard.querySelector('.comment-list') || createCommentList(postCard);
@@ -384,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 `<p class="poll-option">
                     <span class="circle"></span>
                     <span class="poll-option-text">${escapeHTML(option.option_text)}</span>
-                    <span class="vote-count">(<strong>${option.votes}</strong> vote)</span>
+                    <span class="vote-count">(<strong>${option.votes}</strong> v)</span>
                 </p>`
             ).join('')}
            `;
@@ -453,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let currentVotes = parseInt(votesSpan.textContent.match(/\d+/)[0]) || 0;
         console.log("Current votes:", currentVotes);
         currentVotes++;
-        votesSpan.innerHTML = `(<strong>${currentVotes}</strong> vote)`;
+        votesSpan.innerHTML = `(<strong>${currentVotes}</strong> v)`;
         localStorage.setItem(`poll_selection_${pollId}`, selectedIndex);
         sendVoteUpdate(pollId, selectedIndex);
         updateLocalStorage(pollId, selectedIndex);
@@ -619,33 +658,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-//     const sessionId = document.querySelector('.session-id').textContent;
-  
-//   fetchQuestions(sessionId);
-
-//   function fetchQuestions(sessionId) {
-//     fetch(`/api/questions?session_id=${sessionId}`)
-//       .then(response => response.json())
-//       .then(data => {
-//         const postsContainer = document.getElementById('postsContainer');
-//         postsContainer.innerHTML = '';
-//         data.forEach(question => {
-//           const questionBox = document.createElement('div');
-//           questionBox.className = 'question-box';
-//           questionBox.innerHTML = `
-//             <p><strong>${question.user_email || 'Anonymous'}:</strong> ${question.question_text}</p>
-//             <p>Likes: ${question.likes} | Dislikes: ${question.dislikes}</p>
-//           `;
-//           postsContainer.appendChild(questionBox);
-//         });
-//       })
-//       .catch(error => console.error('Error fetching questions:', error));
-//   }
-    
-
-    
-  
-
     document.getElementById('newPostForm').addEventListener('submit', function(event) {
         event.preventDefault();
     
@@ -727,7 +739,63 @@ document.addEventListener('DOMContentLoaded', function () {
         sortPosts();
     });
 
-    
     document.querySelectorAll('.post-card').forEach(initializePostInteractions);
     sortPosts();
+
+
+
+    function handlePostSubmit(event) {
+        event.preventDefault(); // Prevent default form submission
+      
+        const form = document.getElementById('newPostForm');
+        const postId = form.querySelector('input[name="postId"]').value; // Get the post ID if it's an edit
+        const questionText = form.querySelector('input[name="postTitle"]').value; // Get the question text
+      
+        console.log('Submitting the form...');
+        console.log('Post ID:', postId);
+        console.log('Question Text:', questionText);
+      
+        // Check if we are editing an existing post or creating a new one
+        if (postId) {
+          console.log('Editing post...');
+      
+          // Send an AJAX request to update the post
+          fetch(`/edit_post/${postId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              sessionId: form.querySelector('input[name="sessionId"]').value,
+              question_text: questionText,
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Server response:', data);
+            if (data.success) {
+              // Update the UI with the new question text
+              const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+              postCard.querySelector('.question-text').textContent = questionText;
+      
+              // Hide the modal
+              const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
+              modal.hide();
+            } else {
+              alert('Failed to update the post.');
+            }
+          })
+          .catch(error => {
+            console.error('Error updating post:', error);
+          });
+        } 
+        // else {
+        //   // If no postId, create a new post by submitting the form as usual
+        //   console.log('Creating a new post...');
+        //   form.submit();
+        // }
+      
+        return false; // Prevent the default form action
+      }
+      
 });

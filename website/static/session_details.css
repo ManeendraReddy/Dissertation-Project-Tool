@@ -522,7 +522,7 @@ textarea.form-control {
 
 #professorContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(5, minmax(250px, 1fr));
   gap: 1.5rem;
   scroll-behavior: smooth;
   margin-top: 2rem;
@@ -592,10 +592,13 @@ span.poll-option-text {
 }
 
 .poll-container {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(5px, 1fr));
-  gap: 1.5rem;
-  scroll-behavior: smooth;
+  display: contents;
+}
+
+
+span.user-name {
+  font-size: 12px;
+  font-weight: 700;
 }
 
 @media (max-width: 768px) {
@@ -667,7 +670,7 @@ button#clearInputsBtn {
 
 div#newFeatureModal {
   background-color: currentcolor;
-  opacity: .9;
+  opacity: .97;
 }
 
 

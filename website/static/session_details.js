@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
             dislikeIcon.style.color = '#fec006';
         }
 
+
+
         likeIcon.addEventListener('click', function () {
         if (postCard.dataset.liked) {
             likeIcon.classList.remove('liked');
@@ -56,7 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
     
             sortPosts();
-        });
+        }); 
+
 
         const postOptionsToggle = postCard.querySelector('.post-options-toggle');
         const postOptionsDropdown = postCard.querySelector('.post-options-dropdown');
@@ -334,6 +337,173 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+
+
+
+
+    const sessionDetailsElement = document.getElementById('sessionDetails');
+    if (sessionDetailsElement) {
+        observer.observe(sessionDetailsElement);
+    }
+      document.querySelector('.new-post-btn').addEventListener('click', function () {
+        const newPostForm = document.getElementById('newPostForm');
+        const modalLabel = document.getElementById('newPostModalLabel');
+    
+        document.querySelectorAll('#newPostForm input, #newPostForm textarea').forEach(input => {
+            input.value = '';
+        });
+    
+        newPostForm.reset();
+        delete newPostForm.dataset.editingPostId;
+        modalLabel.textContent = 'Post a New Question';
+    
+        const newPostModal = new bootstrap.Modal(document.getElementById('newPostModal'));
+        newPostModal.show();
+    
+        document.querySelector('.modal-backdrop').style.transition = 'none';
+    });
+
+
+    document.getElementById('newPostForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+    
+        const postId = this.dataset.editingPostId;
+        const postTitle = document.getElementById('postTitle').value.trim();
+    
+        if (!postTitle) {
+            alert('Question cannot be empty.');
+            return;
+        }
+        if (postId) {
+            const postCard = document.querySelector(`[data-post-id="${postId}"]`);
+            const postTitleElement = postCard.querySelector('.card-content h5');
+            postTitleElement.textContent = postTitle;
+    
+            const postTimeElement = postCard.querySelector('.post-time');
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-UK', options);
+            postTimeElement.textContent = formattedDate;
+    
+            delete this.dataset.editingPostId;
+            document.getElementById('newPostModalLabel').textContent = 'Post a New Question';
+        } else {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-UK', options);
+    
+            const newPost = document.createElement('div');
+            newPost.classList.add('post-card');
+            newPost.dataset.postId = Math.random().toString(36).substr(2, 9);
+            newPost.innerHTML = `
+                <div class="card-header">
+                    <div class="user-info">
+                        <i class="fa-regular fa-user"></i>
+                        <div>
+                            <div class="user-name">Anonymous</div>
+                        </div>
+                    </div>
+                    <div class="post-options-container">
+                        <i class="fas fa-ellipsis-v post-options-toggle"></i>
+                        <div class="post-options-dropdown d-none">
+                            <button class="edit-post-btn btn btn-sm btn-link">Edit post</button>
+                            <button class="delete-post-btn btn btn-sm btn-link">Delete post</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <h5>${escapeHTML(postTitle)}</h5>
+                </div>
+                <div class="card-actions">
+                    <div class="interaction-icons">
+                        <div class="icon like-icon">
+                            <i class="fas fa-thumbs-up"></i><span>0</span>
+                        </div>
+                        <div class="icon dislike-icon">
+                            <i class="fas fa-thumbs-down"></i><span>0</span>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-comment"></i><span>0</span>
+                        </div>
+                    </div>
+                    <div class="add-comment">Add comment</div>
+                </div>
+            `;
+    
+            const postsContainer = document.getElementById('postsContainer');
+            postsContainer.appendChild(newPost);
+    
+            initializePostInteractions(newPost);
+        }
+    
+        this.reset();
+        const newPostModalInstance = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
+        newPostModalInstance.hide();
+    
+        document.querySelector('.modal-backdrop').remove();
+
+        sortPosts();
+    });
+
+    document.querySelectorAll('.post-card').forEach(initializePostInteractions);
+    sortPosts();
+
+
+
+    function handlePostSubmit(event) {
+        event.preventDefault(); // Prevent default form submission
+      
+        const form = document.getElementById('newPostForm');
+        const postId = form.querySelector('input[name="postId"]').value; // Get the post ID if it's an edit
+        const questionText = form.querySelector('input[name="postTitle"]').value; // Get the question text
+      
+        console.log('Submitting the form...');
+        console.log('Post ID:', postId);
+        console.log('Question Text:', questionText);
+      
+        // Check if we are editing an existing post or creating a new one
+        if (postId) {
+          console.log('Editing post...');
+      
+          // Send an AJAX request to update the post
+          fetch(`/edit_post/${postId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              sessionId: form.querySelector('input[name="sessionId"]').value,
+              question_text: questionText,
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Server response:', data);
+            if (data.success) {
+              // Update the UI with the new question text
+              const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+              postCard.querySelector('.question-text').textContent = questionText;
+      
+              // Hide the modal
+              const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
+              modal.hide();
+            } else {
+              alert('Failed to update the post.');
+            }
+          })
+          .catch(error => {
+            console.error('Error updating post:', error);
+          });
+        } 
+        // else {
+        //   // If no postId, create a new post by submitting the form as usual
+        //   console.log('Creating a new post...');
+        //   form.submit();
+        // }
+      
+        return false; // Prevent the default form action
+      }
+    
 
     // ------------------------------------------------------------------------------------------------
 
@@ -635,167 +805,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }, { threshold: 0 });
 
-    const sessionDetailsElement = document.getElementById('sessionDetails');
-    if (sessionDetailsElement) {
-        observer.observe(sessionDetailsElement);
-    }
-      document.querySelector('.new-post-btn').addEventListener('click', function () {
-        const newPostForm = document.getElementById('newPostForm');
-        const modalLabel = document.getElementById('newPostModalLabel');
-    
-        document.querySelectorAll('#newPostForm input, #newPostForm textarea').forEach(input => {
-            input.value = '';
-        });
-    
-        newPostForm.reset();
-        delete newPostForm.dataset.editingPostId;
-        modalLabel.textContent = 'Post a New Question';
-    
-        const newPostModal = new bootstrap.Modal(document.getElementById('newPostModal'));
-        newPostModal.show();
-    
-        document.querySelector('.modal-backdrop').style.transition = 'none';
-    });
-
-
-    document.getElementById('newPostForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-    
-        const postId = this.dataset.editingPostId;
-        const postTitle = document.getElementById('postTitle').value.trim();
-    
-        if (!postTitle) {
-            alert('Question cannot be empty.');
-            return;
-        }
-        if (postId) {
-            const postCard = document.querySelector(`[data-post-id="${postId}"]`);
-            const postTitleElement = postCard.querySelector('.card-content h5');
-            postTitleElement.textContent = postTitle;
-    
-            const postTimeElement = postCard.querySelector('.post-time');
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-            const formattedDate = now.toLocaleDateString('en-UK', options);
-            postTimeElement.textContent = formattedDate;
-    
-            delete this.dataset.editingPostId;
-            document.getElementById('newPostModalLabel').textContent = 'Post a New Question';
-        } else {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-            const formattedDate = now.toLocaleDateString('en-UK', options);
-    
-            const newPost = document.createElement('div');
-            newPost.classList.add('post-card');
-            newPost.dataset.postId = Math.random().toString(36).substr(2, 9);
-            newPost.innerHTML = `
-                <div class="card-header">
-                    <div class="user-info">
-                        <i class="fa-regular fa-user"></i>
-                        <div>
-                            <div class="user-name">Anonymous</div>
-                        </div>
-                    </div>
-                    <div class="post-options-container">
-                        <i class="fas fa-ellipsis-v post-options-toggle"></i>
-                        <div class="post-options-dropdown d-none">
-                            <button class="edit-post-btn btn btn-sm btn-link">Edit post</button>
-                            <button class="delete-post-btn btn btn-sm btn-link">Delete post</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <h5>${escapeHTML(postTitle)}</h5>
-                </div>
-                <div class="card-actions">
-                    <div class="interaction-icons">
-                        <div class="icon like-icon">
-                            <i class="fas fa-thumbs-up"></i><span>0</span>
-                        </div>
-                        <div class="icon dislike-icon">
-                            <i class="fas fa-thumbs-down"></i><span>0</span>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-comment"></i><span>0</span>
-                        </div>
-                    </div>
-                    <div class="add-comment">Add comment</div>
-                </div>
-            `;
-    
-            const postsContainer = document.getElementById('postsContainer');
-            postsContainer.appendChild(newPost);
-    
-            initializePostInteractions(newPost);
-        }
-    
-        this.reset();
-        const newPostModalInstance = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
-        newPostModalInstance.hide();
-    
-        document.querySelector('.modal-backdrop').remove();
-
-        sortPosts();
-    });
-
-    document.querySelectorAll('.post-card').forEach(initializePostInteractions);
-    sortPosts();
-
-
-
-    function handlePostSubmit(event) {
-        event.preventDefault(); // Prevent default form submission
-      
-        const form = document.getElementById('newPostForm');
-        const postId = form.querySelector('input[name="postId"]').value; // Get the post ID if it's an edit
-        const questionText = form.querySelector('input[name="postTitle"]').value; // Get the question text
-      
-        console.log('Submitting the form...');
-        console.log('Post ID:', postId);
-        console.log('Question Text:', questionText);
-      
-        // Check if we are editing an existing post or creating a new one
-        if (postId) {
-          console.log('Editing post...');
-      
-          // Send an AJAX request to update the post
-          fetch(`/edit_post/${postId}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              sessionId: form.querySelector('input[name="sessionId"]').value,
-              question_text: questionText,
-            }),
-          })
-          .then(response => response.json())
-          .then(data => {
-            console.log('Server response:', data);
-            if (data.success) {
-              // Update the UI with the new question text
-              const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
-              postCard.querySelector('.question-text').textContent = questionText;
-      
-              // Hide the modal
-              const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
-              modal.hide();
-            } else {
-              alert('Failed to update the post.');
-            }
-          })
-          .catch(error => {
-            console.error('Error updating post:', error);
-          });
-        } 
-        // else {
-        //   // If no postId, create a new post by submitting the form as usual
-        //   console.log('Creating a new post...');
-        //   form.submit();
-        // }
-      
-        return false; // Prevent the default form action
-      }
-      
 });

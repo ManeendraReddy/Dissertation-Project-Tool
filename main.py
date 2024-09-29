@@ -192,9 +192,6 @@ def create_question():
     return jsonify({'status': 'success'}), 201
 
 
-
-
-
 @app.route('/api/delete_post/<post_id>/<session_id>', methods=['DELETE'])
 def delete_post(post_id, session_id):
     post = Question.query.filter_by(id=post_id, session_id=session_id).first()
@@ -203,7 +200,6 @@ def delete_post(post_id, session_id):
         db.session.commit()
         return jsonify({'success': True})
     return jsonify({'success': False, 'error': 'Post not found'}), 404
-
 
 
 @app.route('/api/create_poll', methods=['POST'])
@@ -304,6 +300,49 @@ def edit_post(post_id):
         return jsonify({"success": True})
     
     return jsonify({"success": False}), 404
+
+
+
+
+@app.route('/like_post/<int:post_id>', methods=['POST'])
+def like_post(post_id):
+    question = Question.query.filter_by(id=post_id).first()
+    if question:
+        question.likes += 1
+        db.session.commit()
+        return jsonify({'success': True, 'likes': question.likes})
+    return jsonify({'success': False, 'error': 'Post not found'}), 404
+
+@app.route('/unlike_post/<int:post_id>', methods=['POST'])
+def unlike_post(post_id):
+    question = Question.query.filter_by(id=post_id).first()
+    if question:
+        question.likes -= 1
+        db.session.commit()
+        return jsonify({'success': True, 'likes': question.likes})
+    return jsonify({'success': False, 'error': 'Post not found'}), 404
+
+@app.route('/dislike_post/<int:post_id>', methods=['POST'])
+def dislike_post(post_id):
+    question = Question.query.filter_by(id=post_id).first()
+    if question:
+        question.dislikes += 1
+        db.session.commit()
+        return jsonify({'success': True, 'dislikes': question.dislikes})
+    return jsonify({'success': False, 'error': 'Post not found'}), 404
+
+@app.route('/undislike_post/<int:post_id>', methods=['POST'])
+def undislike_post(post_id):
+    question = Question.query.filter_by(id=post_id).first()
+    if question:
+        question.dislikes -= 1
+        db.session.commit()
+        return jsonify({'success': True, 'dislikes': question.dislikes})
+    return jsonify({'success': False, 'error': 'Post not found'}), 404
+
+
+
+
 
 
 if __name__ == '__main__':

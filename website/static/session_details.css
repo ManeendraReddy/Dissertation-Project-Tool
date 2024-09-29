@@ -691,3 +691,14 @@ div#newFeatureModal {
 .id b {
   margin-right: .5rem;
 }
+
+
+
+.icon {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.icon:hover {
+  opacity: 0.8;
+}

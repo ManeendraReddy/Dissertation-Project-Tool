@@ -87,12 +87,12 @@
         {% endfor %}
       </div>
   
-        <a href="#" class="btn new-post-btn" data-bs-toggle="modal" data-bs-target="#newPostModal">+ New Post</a>
+      <a href="#" class="btn new-post-btn" data-bs-toggle="modal" data-bs-target="#newPostModal">+ New Post</a>
       {% else %}
         <div id="professorContainer" class="PContainer">
 
           {% for question in questions %}
-        <div class="post-card" data-post-id="{{ question.id }}" data-likes="{{ question.likes }}" data-dislikes="{{ question.dislikes }}">
+            <div class="post-card" data-post-id="{{ question.id }}" data-likes="{{ question.likes }}" data-dislikes="{{ question.dislikes }}">
             <div class="card-header">
               <div class="user-info">
                   <i class="fa-regular fa-user"></i>
@@ -106,7 +106,6 @@
                   <div class="post-options-dropdown d-none">
                     <button class="edit-post-btn btn btn-sm btn-link">Edit post</button>
                     <button class="delete-post-btn btn btn-sm btn-link" data-session-id="{{ session_id }}" data-user-email="{{ user_email }}">Delete post</button>
-
                   </div>
               </div>
             </div>

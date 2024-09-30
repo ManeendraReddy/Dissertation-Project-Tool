@@ -2,11 +2,10 @@ const inputs = document.querySelectorAll('.otp-input input');
 const timerDisplay = document.getElementById('timer');
 const resendLink = document.querySelector('.resend-link');
 const emailSpan = document.getElementById('email');
-let timeLeft = 120; // 2 minutes in seconds
+let timeLeft = 120;
 let timerId;
 let canResend = true;
 
-// Simulating an email for demonstration
 emailSpan.textContent = "user@example.com";
 
 function startTimer() {

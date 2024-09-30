@@ -10,7 +10,6 @@ import random
 from website.models import Poll, PollOption, Session, User, db, Question
 from werkzeug.utils import secure_filename
 
-
 app = create_app()
 app.config['SECRET_KEY'] = 'your_secret_key'
 
@@ -59,7 +58,6 @@ def join():
     if request.method == 'POST':
         session_id = request.form.get('code')
         session_data = Session.query.filter_by(session_id=session_id).first()
-        
         if session_data:
             user_email = session.get('email', 'guest')
             return redirect(url_for('session_details', session_id=session_data.session_id, user_email=user_email))
@@ -78,17 +76,13 @@ def create():
     if request.method == 'POST':
         title = request.form['title']
         session_id = str(random.randint(10000000, 99999999))  
-        
         new_session = Session(title=title, session_id=session_id)
         db.session.add(new_session)
         db.session.commit()
-
         user_email = session.get('email', 'guest')
-        
         return redirect(url_for('session_details', title=new_session.title, session_id=new_session.session_id, user_email=user_email))
     
     sessions = Session.query.all()
-    
     return render_template('create.html', user=current_user, sessions=sessions)
 
 @app.route('/sessions', methods=['GET'])
@@ -96,7 +90,6 @@ def create():
 def get_sessions():
     user_email = session.get('email', 'guest')
     sessions = Session.query.filter_by(user_email=user_email).all()
-    
     return jsonify([
         {'title': session.title,'session_id': session.session_id, 'user_email': user_email} for session in sessions
     ])
@@ -111,8 +104,6 @@ def session_details(session_id, user_email):
     if session_data:
         title = session_data.title
         question_form = QuestionForm()
-        
-        # Refresh the session to ensure we have the latest data
         db.session.refresh(session_data)
         db.session.expunge_all()
 
@@ -120,7 +111,6 @@ def session_details(session_id, user_email):
     else:
         flash('Session not found.', 'danger')
         return redirect(url_for('join'))
-
 
 
 @app.route('/delete_session/<session_id>', methods=['POST'])
@@ -150,9 +140,7 @@ def post_question():
     )
     db.session.add(new_question)
     db.session.commit()
-
     return redirect(url_for('session_details', session_id=session_id, user_email=user_email))
-
 
 @app.before_request
 def before_request():
@@ -221,9 +209,7 @@ def create_poll():
                     db.session.add(poll_option)
             
             db.session.commit()
-
             new_poll = Poll.query.filter_by(id=poll.id).first()
-
             poll_data = {
                 'id': new_poll.id,
                 'question': new_poll.question,
@@ -232,7 +218,6 @@ def create_poll():
                     for option in new_poll.options
                 ]
             }
-
             return jsonify({'success': True, 'poll': poll_data}), 200
         except Exception as e:
             db.session.rollback()
@@ -278,9 +263,7 @@ def submit_question():
         new_question = Question(question_text=question_text, session_id=session_id, likes=0, dislikes=0)
         db.session.add(new_question)
         db.session.commit()
-
         return {"status": "success"}, 200
-
     return {"status": "error"}, 400
 
 
@@ -289,20 +272,12 @@ def edit_post(post_id):
     data = request.get_json()
     session_id = data.get('sessionId')
     new_question_text = data.get('question_text')
-
-    # Find the post by post_id and session_id in the database
     post = Question.query.filter_by(id=post_id, session_id=session_id).first()
-    
     if post:
-        # Update the question text
         post.question_text = new_question_text
         db.session.commit()
         return jsonify({"success": True})
-    
     return jsonify({"success": False}), 404
-
-
-
 
 @app.route('/like_post/<int:post_id>', methods=['POST'])
 def like_post(post_id):
@@ -339,10 +314,6 @@ def undislike_post(post_id):
         db.session.commit()
         return jsonify({'success': True, 'dislikes': question.dislikes})
     return jsonify({'success': False, 'error': 'Post not found'}), 404
-
-
-
-
 
 
 if __name__ == '__main__':

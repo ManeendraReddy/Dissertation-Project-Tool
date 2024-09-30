@@ -10,7 +10,6 @@ body {
   max-width: 720px;
   margin-top: 3rem;
   margin-left: 3rem;
-
 }
 
 .logout-button {
@@ -114,7 +113,6 @@ a {
   width: max-content;
 }
 
-
 .HLbuttons {
   display: flex;
   justify-content: space-around;
@@ -143,7 +141,6 @@ a {
 
 .modal-footer {
   border-top: none;
-
 }
 
 .btn-close {
@@ -203,7 +200,6 @@ a {
   flex-direction: column;
   justify-content: space-between;
   height: fit-content;
-
 }
 
 .post-card .card-header {
@@ -292,8 +288,6 @@ h5 {
   text-decoration: underline;
 }
 
-
-
 .fa-regular, .far {
   font-family: "Font Awesome 6 Free";
   font-weight: 400;
@@ -323,7 +317,6 @@ h5 {
   margin-bottom: 0.5rem;
   font-weight: bold;
 }
-
 
 .icon {
   cursor: pointer;
@@ -397,7 +390,6 @@ h5 {
   background-color: #240053;
 }
 
-
 .btn-link {
   --bs-btn-color: var(--lt-color-gray-100);
   --bs-btn-hover-color: var(--lt-color-gray-100);
@@ -446,7 +438,6 @@ h5 {
   color: #fff;
 }
 
-
 textarea.form-control {
   height: 2.5rem;
 }
@@ -461,7 +452,6 @@ textarea.form-control {
   justify-content: flex-start;
   align-items: center;
 }
-
 
 .comment-user-info {
   display: flex;
@@ -485,7 +475,6 @@ textarea.form-control {
   cursor: pointer;
 }
 
-
 .new-post {
   position: fixed;
   bottom: 20px;
@@ -508,7 +497,6 @@ textarea.form-control {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   color: #fff;
 }
-
 
 .poll-content ul {
   list-style-type: none;
@@ -545,7 +533,6 @@ textarea.form-control {
   gap: 1.5rem;
 }
 
-
 .main-content-wrapper::-webkit-scrollbar {
   width: 10px;
 }
@@ -559,7 +546,6 @@ textarea.form-control {
 .main-content-wrapper::-webkit-scrollbar-track {
   background-color: #f8f9fa;
 }
-
 
 .poll-box {
   background-color: #240053;
@@ -595,7 +581,6 @@ span.poll-option-text {
   display: contents;
 }
 
-
 span.user-name {
   font-size: 12px;
   font-weight: 700;
@@ -612,7 +597,6 @@ span.user-name {
     grid-template-columns: 1fr;
   }
 }
-
 
 .poll-options {
   margin-top: 10px;
@@ -631,7 +615,6 @@ span.user-name {
 .poll-option.selected {
   background-color: #e6f3ff; 
   color: #000;
-  /* width: max-content; */
   padding: 3px;
 }
 
@@ -667,12 +650,10 @@ button#clearInputsBtn {
   opacity: 0.7;
 }
 
-
 div#newFeatureModal {
   background-color: currentcolor;
   opacity: .97;
 }
-
 
 .id {
   margin-bottom: 1rem;
@@ -691,8 +672,6 @@ div#newFeatureModal {
 .id b {
   margin-right: .5rem;
 }
-
-
 
 .icon {
   cursor: pointer;

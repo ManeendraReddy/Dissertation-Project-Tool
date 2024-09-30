@@ -1,5 +1,209 @@
 document.addEventListener('DOMContentLoaded', function () {    
     
+      const createPollBtn = document.getElementById('createPollBtn');
+      const uploadFileBtn = document.getElementById('uploadFileBtn');
+      const addLinkBtn = document.getElementById('addLinkBtn');
+  
+      const backToOptions1 = document.getElementById('backToOptions1');
+      const backToOptions2 = document.getElementById('backToOptions2');
+      const backToOptions3 = document.getElementById('backToOptions3');
+  
+      const mainOptions = document.getElementById('mainOptions');
+      const pollForm = document.getElementById('pollForm');
+      const linkForm = document.getElementById('linkForm');
+  
+      createPollBtn.addEventListener('click', () => {
+        mainOptions.style.display = 'none';
+        pollForm.style.display = 'block';
+      });
+  
+      uploadFileBtn.addEventListener('click', () => {
+        mainOptions.style.display = 'none';
+        uploadFileForm.style.display = 'block';
+      });
+  
+      addLinkBtn.addEventListener('click', () => {
+        mainOptions.style.display = 'none';
+        linkForm.style.display = 'block';
+      });
+  
+      backToOptions1.addEventListener('click', () => {
+        pollForm.style.display = 'none';
+        mainOptions.style.display = 'block';
+      });
+  
+      backToOptions2.addEventListener('click', () => {
+        uploadFileForm.style.display = 'none';
+        mainOptions.style.display = 'block';
+      });
+  
+      backToOptions3.addEventListener('click', () => {
+        linkForm.style.display = 'none';
+        mainOptions.style.display = 'block';
+      });
+  
+      const newPostModal = document.getElementById('newPostModal');
+      const newFeatureModal = document.getElementById('newFeatureModal');
+  
+      function resetModal(modal) {
+        modal.classList.remove('fade');
+        document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+          backdrop.remove();
+        });
+      }
+  
+      newPostModal.addEventListener('hidden.bs.modal', function () {
+        const form = newPostModal.querySelector('form');
+        if (form) {
+          form.reset();
+        }
+        resetModal(newPostModal);
+      });
+  
+      newFeatureModal.addEventListener('hidden.bs.modal', function () {
+        pollForm.style.display = 'none';
+        uploadFileForm.style.display = 'none';
+        linkForm.style.display = 'none';
+        mainOptions.style.display = 'block';
+        resetModal(newFeatureModal);
+      });
+
+
+        const postCards = document.querySelectorAll('.post-card');
+              
+        postCards.forEach(card => {
+          
+          const editButton = card.querySelector('.edit-post-btn');
+        
+        if (editButton) {
+          editButton.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const modal = new bootstrap.Modal(document.getElementById('newPostModal'));
+            modal.show();
+
+            const questionTextElement = card.querySelector('.question-text');
+            const questionText = questionTextElement.textContent.trim();
+
+            const questionInput = document.querySelector('#newPostForm input[name="postTitle"]');
+            questionInput.value = questionText; 
+
+            document.getElementById('newPostForm').dataset.editingPostId = card.dataset.postId; 
+
+            document.querySelector('#newPostModal .btn.btn-primary').textContent = 'Save Changes';
+            document.getElementById('newPostModalLabel').textContent = 'Edit Your Question';
+          });
+        }
+      });
+
+      newPostModal.addEventListener('hidden.bs.modal', function () {
+        const form = newPostModal.querySelector('form');
+        if (form) {
+          form.reset();
+        }
+        document.querySelector('#newPostModal .btn.btn-primary').textContent = 'Submit';
+        resetModal(newPostModal);
+      });
+
+
+        $(document).ready(function() {
+        const userInteractions = {};
+
+        function sortPosts() {
+          const postCards = Array.from(document.querySelectorAll('.post-card'));
+          const postsContainer = document.getElementById('postsContainer');
+          postCards.sort((a, b) => {
+            const likesA = parseInt(a.getAttribute('data-likes'), 10);
+            const dislikesA = parseInt(a.getAttribute('data-dislikes'), 10);
+            const likesB = parseInt(b.getAttribute('data-likes'), 10);
+            const dislikesB = parseInt(b.getAttribute('data-dislikes'), 10);
+
+            if (likesA > likesB) return -1;
+            if (likesA < likesB) return 1;
+
+            if (dislikesA < dislikesB) return -1;
+            if (dislikesA > dislikesB) return 1;
+
+            return 0;
+          });
+
+          postsContainer.innerHTML = '';
+          postCards.forEach(card => {
+            postsContainer.appendChild(card);
+          });
+        }
+        $('.like-icon').click(function() {
+          const postId = $(this).data('post-id');
+
+          userInteractions[postId] = userInteractions[postId] || { liked: false, disliked: false };
+
+          if (userInteractions[postId].liked) {
+            $.post(`/unlike_post/${postId}`, function(response) {
+              if (response.success) {
+                userInteractions[postId].liked = false;
+                $(`#like-btn-${postId}`).html(`<i class="fas fa-thumbs-up" style="color: #fff;"></i>${response.likes}`);
+                sortPosts();
+              } else {
+                alert(response.error);
+              }
+            });
+          } else {
+            $.post(`/like_post/${postId}`, function(response) {
+              if (response.success) {
+                userInteractions[postId].liked = true;
+                if (userInteractions[postId].disliked) {
+                  $.post(`/undislike_post/${postId}`, function(undislikeResponse) {
+                    if (undislikeResponse.success) {
+                      userInteractions[postId].disliked = false;
+                    }
+                  });
+                }
+                $(`#like-btn-${postId}`).html(`<i class="fas fa-thumbs-up" style="color: #fec006;"></i>${response.likes}`);
+                sortPosts();
+              } else {
+                alert(response.error);
+              }
+            });
+          }
+        });
+
+        $('.dislike-icon').click(function() {
+          const postId = $(this).data('post-id');
+          userInteractions[postId] = userInteractions[postId] || { liked: false, disliked: false };
+
+          if (userInteractions[postId].disliked) {
+            $.post(`/undislike_post/${postId}`, function(response) {
+              if (response.success) {
+                userInteractions[postId].disliked = false;
+                $(`#dislike-btn-${postId}`).html(`<i class="fas fa-thumbs-down" style="color: #fff;"></i>${response.dislikes}`);
+                sortPosts();
+              } else {
+                alert(response.error);
+              }
+            });
+          } else {
+            $.post(`/dislike_post/${postId}`, function(response) {
+              if (response.success) {
+                userInteractions[postId].disliked = true;
+                if (userInteractions[postId].liked) {
+                  $.post(`/unlike_post/${postId}`, function(unlikeResponse) {
+                    if (unlikeResponse.success) {
+                      userInteractions[postId].liked = false;
+                    }
+                  });
+                }
+                $(`#dislike-btn-${postId}`).html(`<i class="fas fa-thumbs-down" style="color: #fec006;"></i>${response.dislikes}`);
+                sortPosts();
+              } else {
+                alert(response.error);
+              }
+            });
+          }
+        });
+        sortPosts();
+      });
+
+
     function initializePostInteractions(postCard) {
         const likeIcon = postCard.querySelector('.like-icon');
         const dislikeIcon = postCard.querySelector('.dislike-icon');
@@ -15,36 +219,36 @@ document.addEventListener('DOMContentLoaded', function () {
             dislikeIcon.style.color = '#fec006';
         }
 
-
-
         likeIcon.addEventListener('click', function () {
-        if (postCard.dataset.liked) {
-            likeIcon.classList.remove('liked');
-            likeIcon.style.color = '';
-            likeIcon.querySelector('span').textContent--;
-            postCard.dataset.liked = '';
-        } else {
-            likeIcon.classList.add('liked');
-            likeIcon.style.color = '#fec006';
-            likeIcon.querySelector('span').textContent++;
-            if (postCard.dataset.disliked) {
-                dislikeIcon.classList.remove('disliked');
-                dislikeIcon.style.color = '';
-                dislikeIcon.querySelector('span').textContent--;
-                postCard.dataset.disliked = '';
+            if (postCard.dataset.liked) {
+                likeIcon.classList.remove('liked');
+                likeIcon.style.color = '';
+                likeIcon.querySelector('span').textContent--;
+                postCard.dataset.liked = '';
+            } 
+            else {
+                likeIcon.classList.add('liked');
+                likeIcon.style.color = '#fec006';
+                likeIcon.querySelector('span').textContent++;
+                if (postCard.dataset.disliked) {
+                    dislikeIcon.classList.remove('disliked');
+                    dislikeIcon.style.color = '';
+                    dislikeIcon.querySelector('span').textContent--;
+                    postCard.dataset.disliked = '';
+                }
+                postCard.dataset.liked = 'true';
             }
-            postCard.dataset.liked = 'true';
-        }
+            sortPosts();
+        });
 
-        sortPosts();
-    });
         dislikeIcon.addEventListener('click', function () {
             if (postCard.dataset.disliked) {
                 dislikeIcon.classList.remove('disliked');
                 dislikeIcon.style.color = '';
                 dislikeIcon.querySelector('span').textContent--;
                 postCard.dataset.disliked = '';
-            } else {
+            } 
+            else {
                 dislikeIcon.classList.add('disliked');
                 dislikeIcon.style.color = '#fec006';
                 dislikeIcon.querySelector('span').textContent++;
@@ -56,10 +260,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 postCard.dataset.disliked = 'true';
             }
-    
             sortPosts();
         }); 
-
 
         const postOptionsToggle = postCard.querySelector('.post-options-toggle');
         const postOptionsDropdown = postCard.querySelector('.post-options-dropdown');
@@ -136,7 +338,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         
-
         const addCommentBtn = postCard.querySelector('.add-comment');
         addCommentBtn.addEventListener('click', function () {
             const commentInputContainer = document.createElement('div');
@@ -273,13 +474,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (likesB !== likesA) {
                 return likesB - likesA;
             }
-
             return dislikesA - dislikesB;
         });
 
         posts.forEach(post => postsContainer.appendChild(post));
     }
-
     function updateCommentCount(postCard, delta) {
         const commentCountElement = postCard.querySelector('.fa-comment + span');
         let commentCount = parseInt(commentCountElement.textContent, 10) || 0;
@@ -316,7 +515,6 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Session ID is missing.');
             return;
         }
-
         fetch(newPostForm.action, {
             method: 'POST',
             body: formData,
@@ -336,10 +534,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error:', error);
         });
     });
-
-
-
-
 
     const sessionDetailsElement = document.getElementById('sessionDetails');
     if (sessionDetailsElement) {
@@ -448,24 +642,20 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.post-card').forEach(initializePostInteractions);
     sortPosts();
 
-
-
     function handlePostSubmit(event) {
-        event.preventDefault(); // Prevent default form submission
+        event.preventDefault();
       
         const form = document.getElementById('newPostForm');
-        const postId = form.querySelector('input[name="postId"]').value; // Get the post ID if it's an edit
-        const questionText = form.querySelector('input[name="postTitle"]').value; // Get the question text
+        const postId = form.querySelector('input[name="postId"]').value;
+        const questionText = form.querySelector('input[name="postTitle"]').value
       
         console.log('Submitting the form...');
         console.log('Post ID:', postId);
         console.log('Question Text:', questionText);
       
-        // Check if we are editing an existing post or creating a new one
         if (postId) {
           console.log('Editing post...');
       
-          // Send an AJAX request to update the post
           fetch(`/edit_post/${postId}`, {
             method: 'POST',
             headers: {
@@ -480,12 +670,9 @@ document.addEventListener('DOMContentLoaded', function () {
           .then(data => {
             console.log('Server response:', data);
             if (data.success) {
-              // Update the UI with the new question text
               const postCard = document.querySelector(`.post-card[data-post-id="${postId}"]`);
               postCard.querySelector('.question-text').textContent = questionText;
-      
-              // Hide the modal
-              const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('newPostModal'));
               modal.hide();
             } else {
               alert('Failed to update the post.');
@@ -495,19 +682,9 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error updating post:', error);
           });
         } 
-        // else {
-        //   // If no postId, create a new post by submitting the form as usual
-        //   console.log('Creating a new post...');
-        //   form.submit();
-        // }
-      
-        return false; // Prevent the default form action
+        return false;
       }
     
-
-    // ------------------------------------------------------------------------------------------------
-
-    const createPollBtn = document.getElementById('createPollBtn');
     createPollBtn.addEventListener('click', function() {
         pollForm.style.display = 'block';
         mainOptions.style.display = 'none';
@@ -517,7 +694,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    const pollForm = document.getElementById('pollForm');
     if (pollForm) {
         pollForm.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -733,7 +909,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         
       }
-    
  
     function closePopupAutomatically() {
         setTimeout(function() {

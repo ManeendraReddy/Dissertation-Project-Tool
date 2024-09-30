@@ -11,8 +11,6 @@ auth = Blueprint('auth', __name__)
 
 mail = Mail()
 
-
-
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -88,7 +86,6 @@ def forgot_password():
     return render_template('forgot-password.html')
 
 
-
 @auth.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_token(token):
     try:
@@ -106,6 +103,3 @@ def reset_token(token):
         flash('Your password has been updated!', 'success')
         return redirect(url_for('auth.login'))
     return render_template('reset-password.html', token=token)
-
-
-

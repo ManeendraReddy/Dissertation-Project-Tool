@@ -4,19 +4,15 @@ from os import path
 from flask_login import LoginManager
 from flask_mail import Mail
 
-
 db = SQLAlchemy()
 mail = Mail()
 DB_NAME = "database.db"
 
 def create_app():
     app = Flask(__name__)
-
     app.config['SECRET_KEY'] = 'your_secret_key'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
-    
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 465
     app.config['MAIL_USERNAME'] = 'maneendrameegada7@gmail.com'
@@ -52,5 +48,3 @@ def create_database(app):
         with app.app_context():
             db.create_all()
             print('Created Database!')
-
-

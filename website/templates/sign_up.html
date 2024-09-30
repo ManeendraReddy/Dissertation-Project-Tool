@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-
 {% block title %}Sign Up{% endblock %}
-
 {% block content %}
 
 <div class="login-page">
@@ -66,13 +64,9 @@
 <script>
   const togglePassword = document.querySelector('#togglePassword');
   const password1 = document.querySelector('#password1');
-
   togglePassword.addEventListener('click', function (e) {
-    // Toggle the type attribute for password1
     const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
     password1.setAttribute('type', type);
-
-    // Toggle the eye icon
     this.querySelector('i').classList.toggle('fa-eye');
     this.querySelector('i').classList.toggle('fa-eye-slash');
   });

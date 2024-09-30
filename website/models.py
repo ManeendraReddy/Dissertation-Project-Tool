@@ -53,3 +53,13 @@ class PollOption(db.Model):
 
     def __repr__(self):
         return f'<PollOption {self.id} - {self.option_text[:20]}>'
+
+class ContactFormSubmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    full_name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), nullable=False)
+    message = db.Column(db.String(1000), nullable=False)
+    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ContactFormSubmission {self.full_name} - {self.email}>'

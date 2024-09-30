@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from website import create_app
 from flask_login import current_user, login_required
 import random
-from website.models import Poll, PollOption, Session, User, db, Question
+from website.models import ContactFormSubmission, Poll, PollOption, Session, User, db, Question
 from werkzeug.utils import secure_filename
 
 app = create_app()
@@ -314,6 +314,26 @@ def undislike_post(post_id):
         db.session.commit()
         return jsonify({'success': True, 'dislikes': question.dislikes})
     return jsonify({'success': False, 'error': 'Post not found'}), 404
+
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        full_name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
+
+        if full_name and email and message:
+            new_contact = ContactFormSubmission(full_name=full_name, email=email, message=message)
+            db.session.add(new_contact)
+            db.session.commit()
+            flash('Your message has been sent successfully!', 'success')
+            return redirect(url_for('contact'))
+
+        else:
+            flash(('danger', 'Please fill in all fields!'))
+
+    return render_template('contactus.html')
 
 
 if __name__ == '__main__':
